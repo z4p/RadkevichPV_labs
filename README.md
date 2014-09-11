@@ -1,5 +1,4 @@
 RadkevichPVLab
 ==============
 
-z4p's Labs
-Без Б, посоны
+z4p's Labs coming soon...
