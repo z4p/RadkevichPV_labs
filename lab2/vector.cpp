@@ -1,7 +1,11 @@
+// vector.cpp
+// contains Vector class implementation
+
 #include <math.h>
 #include <exception>
 #include "vector.h"
 
+// default contructor
 Vector::Vector() {
     this->n = 0;
 }
@@ -22,6 +26,7 @@ Vector::Vector(int n, double* array) {
     } 
 }
 
+// copy constuctor
 Vector::Vector(const Vector& vObj) {
     n = vObj.length();
     values = new double[ n ];
@@ -30,6 +35,7 @@ Vector::Vector(const Vector& vObj) {
     } 
 }
 
+// destructor
 Vector::~Vector() {
     delete [] values;
 }
@@ -62,6 +68,21 @@ void Vector::mul(const double val) {
     }
 }
 
+// scalar multiplication
+double Vector::scalar(const Vector &vObj) {
+    if (vObj.length() != this->length()) {
+        // can't calculate scalar multiplication of two vectors with different lengths
+        throw std::exception();
+    }
+    
+    double s = 0;
+    for(int i = 0; i < n; i++) {
+        s += values[i] * vObj.values[i];
+    }
+    
+    return s;
+}
+
 //  subtacting other vector
 void Vector::sub(const Vector& vObj) {
     if (vObj.length() != this->length()) {
@@ -74,14 +95,17 @@ void Vector::sub(const Vector& vObj) {
     }
 }
 
+// count of vector's elements
 int Vector::length() const {
     return n;
 }
 
-double& Vector::operator[](const int index) {
+// indexing of vector
+double& Vector::operator[](const int index) const {
     return values[index];
 }
 
+// overloading copy assignment operator
 Vector& Vector::operator=(const Vector &rv) {
     // if lvalueObj != rvalueObj
     if (&rv != this) {
@@ -99,22 +123,21 @@ Vector& Vector::operator=(const Vector &rv) {
     return *this;
 }
 
-Vector Vector::operator+(const Vector &rv) {
+Vector Vector::operator+(const Vector &rv) const {
     Vector v(n, values);
     v.add(rv);
     return v;
 }
 
-Vector Vector::operator-(const Vector &rv) {
+Vector Vector::operator-(const Vector &rv) const {
     Vector v(n, values);
     v.sub(rv);
     return v;
 }
 
-Vector Vector::operator*(const double val) {
+double Vector::operator*(const Vector &rv) const {
     Vector v(n, values);
-    v.mul(val);
-    return v;
+    return v.scalar(rv);;
 }
 
 // pre/post inc/dec
