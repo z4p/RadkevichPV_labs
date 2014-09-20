@@ -21,14 +21,16 @@
 
 using namespace std;
 
-// testing of properties of two vectors
-// returns 0 if no, 1 - collinear, 2 - orthogonal
+const int VECTORS_NONSPECIAL = 0;
+const int VECTORS_COLLINEAR = 1;
+const int VECTORS_ORTHOGONAL = 2;
+
 int testVectors(const Vector &v1, const Vector &v2) {
     if (v1.length() != v2.length()) {
         throw std::exception();
     }
     
-    int res = 0;
+    int res = VECTORS_NONSPECIAL;
     bool f = true;
     
     // collin test
@@ -40,11 +42,11 @@ int testVectors(const Vector &v1, const Vector &v2) {
     }
     
     if (f) {
-        res = 1;
+        res = VECTORS_COLLINEAR;
     } else {
         // orthog test
         if (v1*v2 == 0) {
-            res = 2;
+            res = VECTORS_ORTHOGONAL;
         }
     }
     
@@ -67,13 +69,13 @@ int main(int argc, char** argv) {
     
     int r = testVectors(*vs[0], *vs[2]);
     switch (r) {
-        case 0:
+        case VECTORS_NONSPECIAL:
             cout << "There is nothing interesting here" << endl;
             break;
-        case 1:
+        case VECTORS_COLLINEAR:
             cout << "Vectors are collinear" << endl;
             break;
-        case 2:
+        case VECTORS_ORTHOGONAL:
             cout << "Vectors are orthogonal" << endl;
             break;
         default:
