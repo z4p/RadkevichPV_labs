@@ -141,18 +141,13 @@ Vector& Vector::operator=(const Vector &rv) {
 }
 
 // move assignment
-// TODO: rewrite this copy-paste shit
 Vector& Vector::operator=(const Vector&& rv) {
-    // if objects have different lengths we should reinit our array
-    if (rv.length() != this->length()) {
-        clear( rv.length() );
+    // if lvalueObj != rvalueObj
+    if (&rv != this) {
+        n = std::move(rv.n);
+        values = std::move(rv.values);
     }
-
-    // copying
-    n = rv.n;
-    for(int i = 0; i < rv.length(); i++) {
-        values[i] = rv.values[i];
-    }
+    return *this;
 }
 
 Vector Vector::operator+(const Vector &rv) const {
