@@ -141,6 +141,7 @@ Vector& Vector::operator=(const Vector &rv) {
 }
 
 // move assignment
+// TODO: rewrite this copy-paste shit
 Vector& Vector::operator=(const Vector&& rv) {
     // if objects have different lengths we should reinit our array
     if (rv.length() != this->length()) {
