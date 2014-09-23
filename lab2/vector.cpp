@@ -20,12 +20,11 @@ Vector::Vector(int n, double* array) : n(n), values(nullptr) {
     values = new double[n];
     for(int i = 0; i < n; i++) {
         values[i] = array[i];
-    } 
+    }
 }
 
 // copy constuctor
-Vector::Vector(const Vector& vObj) : n(n), values(nullptr) {
-    n = vObj.length();
+Vector::Vector(const Vector& vObj) : n(vObj.length()), values(nullptr) {
     values = new double[ n ];
     for(int i = 0; i < n; i++) {
         values[i] = vObj.values[i];
@@ -34,18 +33,49 @@ Vector::Vector(const Vector& vObj) : n(n), values(nullptr) {
 
 // move constructor
 Vector::Vector(const Vector &&obj) :
-        n(std::move(obj.n)),
-        values(std::move(obj.values)) {}
+        n( std::move(obj.n) ),
+        values( std::move(obj.values) ) {}
 
 // destructor
 Vector::~Vector() {
     clear();
 }
 
+// copy assignment
+Vector& Vector::operator=(const Vector &rv) {
+    // if lvalueObj != rvalueObj
+    if (&rv != this) {
+        // if objects have different lengths we should reinit our array
+        if (rv.length() != this->length()) {
+            clear( rv.length() );
+        }
+
+        // copying
+        n = rv.n;
+        for(int i = 0; i < rv.length(); i++) {
+            values[i] = rv.values[i];
+        }
+    }
+    return *this;
+}
+
+// move assignment
+//Vector& Vector::operator=(const Vector&& rv) {
+//    // if lvalueObj != rvalueObj
+//    if (&rv != this) {
+//        n = std::move(rv.n);
+//        values = std::move(rv.values);
+//    }
+//    return *this;
+//}
+
 // erases vector's data, may create a new one (private)
 void Vector::clear(int newSize /* = 0 */ ) {
     n = newSize;
-    delete [] values;
+    if (values) {
+        delete [] values;
+        values = nullptr;
+    }
     if (newSize != 0) {
         values = new double[newSize];
     }
@@ -120,34 +150,6 @@ double& Vector::operator[](const int index) const {
         throw std::exception(); // index is out of range
     }
     return values[index];
-}
-
-// copy assignment
-Vector& Vector::operator=(const Vector &rv) {
-    // if lvalueObj != rvalueObj
-    if (&rv != this) {
-        // if objects have different lengths we should reinit our array
-        if (rv.length() != this->length()) {
-            clear( rv.length() );
-        }
-
-        // copying
-        n = rv.n;
-        for(int i = 0; i < rv.length(); i++) {
-            values[i] = rv.values[i];
-        }
-    }
-    return *this;
-}
-
-// move assignment
-Vector& Vector::operator=(const Vector&& rv) {
-    // if lvalueObj != rvalueObj
-    if (&rv != this) {
-        n = std::move(rv.n);
-        values = std::move(rv.values);
-    }
-    return *this;
 }
 
 Vector Vector::operator+(const Vector &rv) const {

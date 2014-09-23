@@ -25,7 +25,7 @@ public:
     int length() const;                // count of elements
     
     Vector& operator=(const Vector &rv);       // copy assignment       
-    Vector& operator=(const Vector &&rv);      // move assignment       
+    //Vector& operator=(const Vector &&rv);      // move assignment       
     Vector operator+(const Vector &rv) const;
     Vector operator-(const Vector &rv) const;
     double operator*(const Vector &rv) const;

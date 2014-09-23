@@ -75,28 +75,26 @@ int main(int argc, char** argv) {
     double v2c[] = {0,-2,0,1};
     double v3c[] = {2,4,6,8};
     
-    Vector vs[4];
-    
-    vs[0] = Vector(4, v0c);
-    vs[1] = Vector(4, v1c);
-    vs[2] = Vector(4, v2c);
-    vs[3] = Vector(4, v3c);
+    Vector vs0(4, v0c);
+    Vector vs1(4, v1c);
+    Vector vs2(4, v2c);
+    Vector vs3(4, v3c);
             
     // unit test parody
     if (
-            VECTORS_NONSPECIAL != testVectors(vs[0], vs[2]) || 
-            VECTORS_ORTHOGONAL != testVectors(vs[1], vs[2]) || 
-            VECTORS_COLLINEAR  != testVectors(vs[1], vs[3]) ||
-            (vs[1]*2 - vs[3]).abs() != 0
+            VECTORS_NONSPECIAL != testVectors(vs0, vs2) 
+            || VECTORS_ORTHOGONAL != testVectors(vs1, vs2)
+            || VECTORS_COLLINEAR  != testVectors(vs1, vs3)
+            || (vs1*2 - vs3).abs() != 0
        ) {
         cout << "Something doen't work =(" << endl;
     }
 
 //    testVectors(vs[0], Vector(3)); // exception
     
-    Vector v1 = vs[0];    // (1,0,0,1)
-    v1[1] = 2;            // (1,2,0,1)
-    Vector v2( v1*4 );    // (4,8,0,4)
+    Vector v1 = vs0;    // (1,0,0,1)
+    v1[1] = 2;          // (1,2,0,1)
+    Vector v2( v1*4 );  // (4,8,0,4)
     
     cout << v1 << endl << v2 << endl;
     
