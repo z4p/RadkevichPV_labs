@@ -5,20 +5,17 @@
 #include <exception>
 #include "vector.h"
 
-// default contructor
-Vector::Vector() {
-    this->n = 0;
-}
+// constructor without parameters
+Vector::Vector() : n(0), values(nullptr) {}
 
-Vector::Vector(int n) {
-    this->n = n;
+Vector::Vector(int n) : n(n), values(nullptr) {
     values = new double[n];
     for(int i = 0; i < n; i++) {
         values[i] = 0;
     }
 }
 
-Vector::Vector(int n, double* array) {
+Vector::Vector(int n, double* array) : n(n), values(nullptr) {
     this->n = n;
     values = new double[n];
     for(int i = 0; i < n; i++) {
@@ -27,7 +24,7 @@ Vector::Vector(int n, double* array) {
 }
 
 // copy constuctor
-Vector::Vector(const Vector& vObj) {
+Vector::Vector(const Vector& vObj) : n(n), values(nullptr) {
     n = vObj.length();
     values = new double[ n ];
     for(int i = 0; i < n; i++) {
@@ -35,9 +32,23 @@ Vector::Vector(const Vector& vObj) {
     } 
 }
 
+// move constructor
+Vector::Vector(const Vector &&obj) :
+        n(std::move(obj.n)),
+        values(std::move(obj.values)) {}
+
 // destructor
 Vector::~Vector() {
+    clear();
+}
+
+// erases vector's data, may create a new one (private)
+void Vector::clear(int newSize /* = 0 */ ) {
+    n = newSize;
     delete [] values;
+    if (newSize != 0) {
+        values = new double[newSize];
+    }
 }
 
 // calculating vector's absolute value
@@ -102,25 +113,45 @@ int Vector::length() const {
 
 // indexing of vector
 double& Vector::operator[](const int index) const {
+    if (values == nullptr) {
+        throw std::exception(); // vector's data hasn't been initialised
+    }
+    if (index < 0 || index >= n) {
+        throw std::exception(); // index is out of range
+    }
     return values[index];
 }
 
-// overloading copy assignment operator
+// copy assignment
 Vector& Vector::operator=(const Vector &rv) {
     // if lvalueObj != rvalueObj
     if (&rv != this) {
         // if objects have different lengths we should reinit our array
         if (rv.length() != this->length()) {
-            delete [] values;
-            values = new double[rv.length()];
+            clear( rv.length() );
         }
 
         // copying
+        n = rv.n;
         for(int i = 0; i < rv.length(); i++) {
             values[i] = rv.values[i];
         }
     }
     return *this;
+}
+
+// move assignment
+Vector& Vector::operator=(const Vector&& rv) {
+    // if objects have different lengths we should reinit our array
+    if (rv.length() != this->length()) {
+        clear( rv.length() );
+    }
+
+    // copying
+    n = rv.n;
+    for(int i = 0; i < rv.length(); i++) {
+        values[i] = rv.values[i];
+    }
 }
 
 Vector Vector::operator+(const Vector &rv) const {
@@ -137,7 +168,13 @@ Vector Vector::operator-(const Vector &rv) const {
 
 double Vector::operator*(const Vector &rv) const {
     Vector v(n, values);
-    return v.scalar(rv);;
+    return v.scalar(rv);
+}
+
+Vector Vector::operator*(const double val) const {
+    Vector v(n, values);
+    v.mul(val);
+    return v;
 }
 
 // pre/post inc/dec
