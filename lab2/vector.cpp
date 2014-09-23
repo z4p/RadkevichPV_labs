@@ -181,17 +181,27 @@ Vector Vector::operator*(const double val) const {
 // pre/post inc/dec
 
 Vector& Vector::operator++() {
-    
+    for(int i = 0; i < n; i++) {
+        values[i] += 1;
+    }
+    return *this;
 }
 
 Vector Vector::operator++(int) {
-    
+    Vector v = *this;
+    ++*this;
+    return v;
 }
 
 Vector& Vector::operator--() {
-    
+    for(int i = 0; i < n; i++) {
+        values[i] -= 1;
+    }
+    return *this;
 }
 
 Vector Vector::operator--(int) {
-    
+    Vector v = *this;
+    --*this;
+    return v;
 }
