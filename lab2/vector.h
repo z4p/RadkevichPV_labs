@@ -1,5 +1,9 @@
+#ifndef VECTOR_H
+#define	VECTOR_H
+
 // vector.h
 // contains Vector class declaration
+
 #include <iostream>
 
 class Vector {
@@ -38,3 +42,5 @@ public:
     
     friend std::ostream& operator<<(std::ostream& out, const Vector& vec);
 };
+
+#endif /* VECTOR_H */
