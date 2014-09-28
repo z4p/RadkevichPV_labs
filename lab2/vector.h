@@ -34,7 +34,7 @@ public:
     Vector operator++(int);
     Vector& operator--();
     Vector operator--(int);
-    double& operator[](const int index) const;
+    double& operator[](const int index) const;//цікавы у вас прататып, будуць праблемы
     
     friend std::ostream& operator<<(std::ostream& out, const Vector& vec);
 };
