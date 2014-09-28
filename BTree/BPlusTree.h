@@ -11,8 +11,9 @@ struct BTreeNode {
     List childs;            // список (делегат от дочернего нода (index), ссылка на него)
     BTreeNode *rchild;      // ссылка на правый дочерний нод (не делегирует ключа)
     BTreeNode *lbro, *rbro; // ссылки на левого и правого брата
+    bool isLeaf;            // является ли нода листом?
     BTreeNode();
-    BTreeNode(DataType val);
+//    BTreeNode(DataType val, BTreeNode *parent = nullptr);
 };
 
 class BPlusTree {
@@ -28,9 +29,9 @@ public:
 private:
     BTreeNode *root;
 
-    void share(BTreeNode& node1, BTreeNode& node2); // перераспределение элементов соседних узлов
-    void split(BTreeNode& node);                   // разбиение одного узла на два
-    void fuse(BTreeNode& node1, BTreeNode& node2);  // объединение двух соседних узлов в один
+    void share(BTreeNode* node1, BTreeNode* node2); // перераспределение элементов соседних узлов
+    void split(BTreeNode* node);                    // разбиение одного узла на два
+    void fuse(BTreeNode* node1, BTreeNode* node2);  // объединение двух соседних узлов в один
 };
 
 #endif	/* BPLUSTREE_H */

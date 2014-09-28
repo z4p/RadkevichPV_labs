@@ -23,9 +23,15 @@ public:
     List(const List& orig);
     ~List();
     
-    void insert(DataType val);
+    void insert(DataType val, BTreeNode* link = nullptr);
     void remove(DataType val);
-    void find(DataType val);
+    ListNode* find(DataType val);
+    int Length();
+
+    ListNode* begin();
+    ListNode* end();
+    void setBegin(ListNode* b);
+    void setEnd(ListNode* e);
     
 private:
     ListNode *begin, *end;
