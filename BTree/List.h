@@ -14,7 +14,7 @@ struct ListNode {
     DataType index;
     BTreeNode *child;
     ListNode();
-    ListNode(DataType val);
+    ListNode(DataType val, BTreeNode* child);
 };
 
 class List {
@@ -23,10 +23,10 @@ public:
     List(const List& orig);
     ~List();
     
-    void insert(DataType val, BTreeNode* link = nullptr);
+    void insert(DataType val, BTreeNode* child = nullptr);
     void remove(DataType val);
     ListNode* find(DataType val);
-    int Length();
+    int Length() const;
 
     ListNode* begin();
     ListNode* end();
