@@ -20,9 +20,13 @@ void List::insert(DataType val, BTreeNode* child) {
         end = lp;
     } else {
         ListNode *i = begin;
-        while (i->index > val && i->next) {
+        while (i->index < val && i->next) {
             i = i->next;
         }
+    if (i->index == val) {
+        // index is a unique key. If the same index exists, an exception will be thrown
+        throw std::exception();
+    }
         
         if (!i->next) {
             // inserting at the end
@@ -46,14 +50,35 @@ void List::insert(DataType val, BTreeNode* child) {
 
 void List::remove(DataType val) {
     if (!begin) {
+        // removing from empty list
         throw std::exception();
     }
     
-    for(ListNode *i = begin; i->next; i = i->next) {
-        if (i->index == val) {
-            
-        }
+    ListNode *i = begin;
+    while (i->index < val && i->next) {
+        i = i->next;
     }
+    if (i->index >= val) {
+        // can't find the key <val> to remove
+        throw std::exception();
+    }
+
+    // if not first ListNode
+    if (i->prev) {
+        i->prev->next = i->next;
+    } else {
+        begin = i->next;
+    }
+    
+    // if not last ListNode
+    if (i->next) {
+        i->next->prev = i->prev;
+    } else {
+        end = i->prev;
+    }
+    
+    delete i;
+    length--;
 }
 
 ListNode* List::find(DataType val) {
