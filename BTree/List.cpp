@@ -11,6 +11,14 @@ List::List(const List& orig) {
 }
 
 List::~List() {
+    ListNode *i = begin;
+    ListNode *p;
+    while (i) {
+        p = i;
+        i = i->next;
+        delete p;
+    }
+    begin = end = nullptr;
 }
 
 void List::insert(DataType val, BTreeNode* child) {
@@ -81,11 +89,20 @@ void List::remove(DataType val) {
     length--;
 }
 
-ListNode* List::find(DataType val) {
-    
+ListNode* List::find(DataType val) const {
+    ListNode *i = begin;
+    while (i->index < val && i->next) {
+        i = i->next;
+    }
+    if (i->index == val) {
+        return i;
+    } else {
+        // can't find the key <val>
+        throw std::exception();
+    }
 }
 
-int List::Length() {
+int List::Length() const {
     return length;
 }
 
