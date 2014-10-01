@@ -1,3 +1,5 @@
+#include <exception>
+
 #include "BPlusTree.h"
 #include "List.h"
 
@@ -30,7 +32,7 @@ BPlusTree::insert(DataType val) {
     
     tp->childs.insert(val);
     
-    // if D keys in this Node then split Node
+    // if D keys are in this Node then split Node
     if (tp->childs.Length() >= D) {
         split(tp);
     }
@@ -57,6 +59,7 @@ BPlusTree::split(BTreeNode* node) {
     // fixing of delegates
     if (node == root) {
         BTreeNode tp = new BTreeNode();
+        tp->isLeaf = false;
         tp->rchild = bro;
         tp->childs.insert( node->childs.end()->index, node);
         root = tp;
@@ -77,4 +80,37 @@ BTreeNode::BTreeNode() {
     this->parent = nullptr;
     this->isLeaf = true;
     this->rchild = nullptr;
+}
+
+void BPlusTree::remove(int val) {
+    if (!root) {
+        // tree is empty
+        throw new std::exception();
+    }
+    
+    BTreeNode *tp = root;
+    while (!tp->isLeaf) {
+        for(ListNode* lp = tp->childs.begin(); lp = lp->next; lp->next != nullptr) {
+            if (val < lp->index) {
+                tp = lp->child;
+                break;
+            }
+        }
+    }
+    
+    tp->childs.remove(val);
+    // if less then A*D keys are in this Node take fuse
+    if (tp->childs.Length() <= D*A) {
+        if (tp->lbro && tp->lbro->childs.Length() > D*A+1) {
+            share(tp, tp->lbro);
+        } else if (tp->rbro && tp->rbro->childs.Length() > D*A+1) {
+            share(tp, tp->rbro);
+        } else if (tp->lbro && tp->lbro->childs.Length() <= D*A+1) {
+            fuse(tp, tp->lbro);
+        } else if (tp->rbro && tp->rbro->childs.Length() <= D*A+1) {
+            fuse(tp, tp->rbro);
+        } else {
+            // removing this node, all its childs will belong to parent
+        }
+    }
 }

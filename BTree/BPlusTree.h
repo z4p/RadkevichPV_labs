@@ -24,7 +24,7 @@ public:
     
     void insert(DataType val);
     void remove(DataType val);
-    void find(DataType val) const;
+    ListNode* find(DataType val);
     
 private:
     BTreeNode *root;
