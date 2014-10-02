@@ -22,7 +22,7 @@ BPlusTree::insert(DataType val) {
     BTreeNode *tp = root;
     
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->childs.begin(); lp = lp->next; lp->next != nullptr) {
+        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next != nullptr) {
             if (lp->index > val) {
                 tp = lp->child;
                 break;
@@ -30,10 +30,10 @@ BPlusTree::insert(DataType val) {
         }
     }
     
-    tp->childs.insert(val);
+    tp->children.insert(val);
     
     // if D keys are in this Node then split Node
-    if (tp->childs.Length() >= D) {
+    if (tp->children.Length() >= D) {
         split(tp);
     }
 }
@@ -48,28 +48,28 @@ BPlusTree::split(BTreeNode* node) {
     node->rbro = bro;
     
     // splitting
-    ListNode lp = node->childs.begin();
-    for(int i = 0; i < node->childs.Length()/2; i++) {
+    ListNode lp = node->children.begin();
+    for(int i = 0; i < node->children.Length()/2; i++) {
         lp = lp->next;
     }
-    bro->childs.setBegin( lp->next );
-    bro->childs.setEnd( node->childs.end() );
-    node->childs.setEnd( lp );
+    bro->children.setBegin( lp->next );
+    bro->children.setEnd( node->children.end() );
+    node->children.setEnd( lp );
     
     // fixing of delegates
     if (node == root) {
         BTreeNode tp = new BTreeNode();
         tp->isLeaf = false;
-        tp->rchild = bro;
-        tp->childs.insert( node->childs.end()->index, node);
+        tp->children.insert( node->children.end()->index, node );
+        tp->children.insert( 0, bro );
         root = tp;
         node->parent = root;
         bro->parent = root;
     } else {
-        if (node->parent->childs.Length() < D-1) {
+        if (node->parent->children.Length() < D-1) {
             // todo: right node test
-            node->parent->childs.find( bro->childs.end()->index )->child = bro;
-            node->parent->childs.insert( node->childs.end()->index, node );
+            node->parent->children.find( bro->children.end()->index )->child = bro;
+            node->parent->children.insert( node->children.end()->index, node );
         }
     }
 }
@@ -79,7 +79,11 @@ BTreeNode::BTreeNode() {
     this->rbro = nullptr;
     this->parent = nullptr;
     this->isLeaf = true;
-    this->rchild = nullptr;
+}
+
+int BTreeNode::keysCount() {
+    // if node is right then it has no last delegate
+    return children.Length() - (rbro ? 1 : 0);
 }
 
 void BPlusTree::remove(int val) {
@@ -90,7 +94,7 @@ void BPlusTree::remove(int val) {
     
     BTreeNode *tp = root;
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->childs.begin(); lp = lp->next; lp->next != nullptr) {
+        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next != nullptr) {
             if (val < lp->index) {
                 tp = lp->child;
                 break;
@@ -98,16 +102,16 @@ void BPlusTree::remove(int val) {
         }
     }
     
-    tp->childs.remove(val);
+    tp->children.remove(val);
     // if less then A*D keys are in this Node take fuse
-    if (tp->childs.Length() <= D*A) {
-        if (tp->lbro && tp->lbro->childs.Length() > D*A+1) {
+    if (tp->children.Length() <= D*A) {
+        if (tp->lbro && tp->lbro->children.Length() > D*A+1) {
             share(tp, tp->lbro);
-        } else if (tp->rbro && tp->rbro->childs.Length() > D*A+1) {
+        } else if (tp->rbro && tp->rbro->children.Length() > D*A+1) {
             share(tp, tp->rbro);
-        } else if (tp->lbro && tp->lbro->childs.Length() <= D*A+1) {
+        } else if (tp->lbro && tp->lbro->children.Length() <= D*A+1) {
             fuse(tp, tp->lbro);
-        } else if (tp->rbro && tp->rbro->childs.Length() <= D*A+1) {
+        } else if (tp->rbro && tp->rbro->children.Length() <= D*A+1) {
             fuse(tp, tp->rbro);
         } else {
             // removing this node, all its childs will belong to parent

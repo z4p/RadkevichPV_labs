@@ -8,11 +8,16 @@ const double A = 0.5;   // A*D - min count of elements in BTreeNode
 
 struct BTreeNode {
     BTreeNode *parent;      // ссылка на родителя
-    List childs;            // список (делегат от дочернего нода (index), ссылка на него)
-    BTreeNode *rchild;      // ссылка на правый дочерний нод (не делегирует ключа)
+    List children;          // список (делегат от дочернего нода (index), ссылка на него)
+    // rchild, вообще говоря, плохая идея. Лучше просто проверять наличие rbro, и 
+    // если его нет - не считать последнего делегата (отправлять по нему 
+    // при поиске/обходе). Тогда максимумом для нода
+    // будет D-1 ключей НЕ СЧИТАЯ ссылку на последний (Length: children.Length + (rbro ? 0:1))
+    // BTreeNode *rchild;      // ссылка на правый дочерний нод (не делегирует ключа)
     BTreeNode *lbro, *rbro; // ссылки на левого и правого брата
     bool isLeaf;            // является ли нода листом?
     BTreeNode();
+    int keysCount();
 //    BTreeNode(DataType val, BTreeNode *parent = nullptr);
 };
 
