@@ -2,8 +2,8 @@
 #include <exception>
 
 List::List() {
-    this->begin = nullptr;
-    this->end = nullptr;
+    this->_begin = nullptr;
+    this->_end = nullptr;
     this->length = 0;
 }
 
@@ -11,23 +11,23 @@ List::List(const List& orig) {
 }
 
 List::~List() {
-    ListNode *i = begin;
+    ListNode *i = _begin;
     ListNode *p;
     while (i) {
         p = i;
         i = i->next;
         delete p;
     }
-    begin = end = nullptr;
+    _begin = _end = nullptr;
 }
 
 void List::insert(DataType val, BTreeNode* child) {
     ListNode *lp = new ListNode(val, child);
-    if (!begin) {
-        begin = lp;
-        end = lp;
+    if (!_begin) {
+        _begin = lp;
+        _end = lp;
     } else {
-        ListNode *i = begin;
+        ListNode *i = _begin;
         while (i->index < val && i->next) {
             i = i->next;
         }
@@ -41,7 +41,7 @@ void List::insert(DataType val, BTreeNode* child) {
             i->next = lp;
             lp->prev = i;
             lp->next = nullptr;
-            end = lp;
+            _end = lp;
         } else {
             lp->next = i;
             lp->prev = i->prev;
@@ -49,7 +49,7 @@ void List::insert(DataType val, BTreeNode* child) {
             if (lp->prev) {
                 lp->prev->next = lp;
             } else {
-                begin = lp;
+                _begin = lp;
             }
         }
     }
@@ -57,12 +57,12 @@ void List::insert(DataType val, BTreeNode* child) {
 }
 
 void List::remove(DataType val) {
-    if (!begin) {
+    if (!_begin) {
         // removing from empty list
         throw std::exception();
     }
     
-    ListNode *i = begin;
+    ListNode *i = _begin;
     while (i->index < val && i->next) {
         i = i->next;
     }
@@ -75,14 +75,14 @@ void List::remove(DataType val) {
     if (i->prev) {
         i->prev->next = i->next;
     } else {
-        begin = i->next;
+        _begin = i->next;
     }
     
     // if not last ListNode
     if (i->next) {
         i->next->prev = i->prev;
     } else {
-        end = i->prev;
+        _end = i->prev;
     }
     
     delete i;
@@ -90,7 +90,7 @@ void List::remove(DataType val) {
 }
 
 ListNode* List::find(DataType val) const {
-    ListNode *i = begin;
+    ListNode *i = _begin;
     while (i->index < val && i->next) {
         i = i->next;
     }
@@ -107,11 +107,11 @@ int List::Length() const {
 }
 
 void List::setBegin(ListNode* b) {
-    begin = b;
+    _begin = b;
 }
 
 void List::setEnd(ListNode* e) {
-    end = e;
+    _end = e;
 }
 
 // ListNode (struct) constructors

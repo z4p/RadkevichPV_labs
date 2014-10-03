@@ -1,5 +1,4 @@
-#ifndef LIST_H
-#define	LIST_H
+#pragma once
 
 #include "BPlusTree.h"
 #define DataType int
@@ -34,9 +33,6 @@ public:
     void setEnd(ListNode* e);
     
 private:
-    ListNode *begin, *end;
+    ListNode *_begin, *_end;
     int length;
 };
-
-#endif	/* LIST_H */
-

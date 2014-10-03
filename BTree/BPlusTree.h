@@ -1,5 +1,4 @@
-#ifndef BPLUSTREE_H
-#define	BPLUSTREE_H
+#pragma once
 
 #include "List.h"
 
@@ -38,5 +37,3 @@ private:
     void split(BTreeNode* node);                    // разбиение одного узла на два
     void fuse(BTreeNode* node1, BTreeNode* node2);  // объединение двух соседних узлов в один
 };
-
-#endif	/* BPLUSTREE_H */

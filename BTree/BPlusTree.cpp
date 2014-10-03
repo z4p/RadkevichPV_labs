@@ -13,23 +13,20 @@ BPlusTree::BPlusTree(const BPlusTree& orig) {
 BPlusTree::~BPlusTree() {
 }
 
-BPlusTree::insert(DataType val) {
+void BPlusTree::insert(DataType val) {
     if (!root) {
         root = new BTreeNode();
     }
-    
-    // searching place for insert
+    // searching a place for insert
     BTreeNode *tp = root;
-    
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next != nullptr) {
+        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next) {
             if (lp->index > val) {
                 tp = lp->child;
                 break;
             }
         }
     }
-    
     tp->children.insert(val);
     
     // if D keys are in this Node then split Node
@@ -38,7 +35,7 @@ BPlusTree::insert(DataType val) {
     }
 }
 
-BPlusTree::split(BTreeNode* node) {
+void BPlusTree::split(BTreeNode* node) {
     // new right Node
     BTreeNode *bro = new BTreeNode();
     bro->parent = node->parent;
@@ -48,7 +45,7 @@ BPlusTree::split(BTreeNode* node) {
     node->rbro = bro;
     
     // splitting
-    ListNode lp = node->children.begin();
+    ListNode *lp = node->children.begin();
     for(int i = 0; i < node->children.Length()/2; i++) {
         lp = lp->next;
     }
@@ -58,7 +55,7 @@ BPlusTree::split(BTreeNode* node) {
     
     // fixing of delegates
     if (node == root) {
-        BTreeNode tp = new BTreeNode();
+        BTreeNode *tp = new BTreeNode();
         tp->isLeaf = false;
         tp->children.insert( node->children.end()->index, node );
         tp->children.insert( 0, bro );
