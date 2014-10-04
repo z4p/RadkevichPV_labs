@@ -3,6 +3,9 @@
 #include "BPlusTree.h"
 #include "List.h"
 
+class List;
+struct ListNode;
+
 BPlusTree::BPlusTree() {
     this->root = nullptr;
 }
@@ -20,7 +23,7 @@ void BPlusTree::insert(DataType val) {
     // searching a place for insert
     BTreeNode *tp = root;
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next) {
+        for(ListNode* lp = tp->children.begin(); lp->next; lp = lp->next) {
             if (lp->index > val) {
                 tp = lp->child;
                 break;
@@ -91,7 +94,7 @@ void BPlusTree::remove(int val) {
     
     BTreeNode *tp = root;
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->children.begin(); lp = lp->next; lp->next != nullptr) {
+        for(ListNode* lp = tp->children.begin(); lp->next; lp = lp->next) {
             if (val < lp->index) {
                 tp = lp->child;
                 break;
@@ -114,4 +117,22 @@ void BPlusTree::remove(int val) {
             // removing this node, all its childs will belong to parent
         }
     }
+}
+
+void BTreeNode::draw(std::ostream& out) {
+    out << "[";
+    for(ListNode* lp = this->children.begin(); lp->next; lp = lp->next) {
+        out << lp->index << (lp->next ? ',' : ']');
+    }
+}
+
+void BPlusTree::draw(std::ostream& out) const {
+    BTreeNode *tp = root;
+    do {
+        for(BTreeNode *ti = tp; ti->rbro; ti = ti->rbro) {
+            ti->draw(out);
+        }
+        out << std::endl;
+        tp = tp->children.begin()->child;
+    } while (!tp->isLeaf);
 }

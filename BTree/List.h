@@ -1,5 +1,7 @@
-#pragma once
+#ifndef LIST_H
+#define LIST_H
 
+#include <iostream>
 #include "BPlusTree.h"
 #define DataType int
 
@@ -7,6 +9,9 @@
  * List - двусвязный список для B+деревьев
  * Вставка происходит в отсортированный список (список отсортирован всегда)
  */
+
+class BPlusTree;
+struct BTreeNode;
 
 struct ListNode {
     ListNode *prev, *next;
@@ -36,3 +41,5 @@ private:
     ListNode *_begin, *_end;
     int length;
 };
+
+#endif /* LIST_H */

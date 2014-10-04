@@ -1,3 +1,4 @@
+#include "BPlusTree.h"
 #include "List.h"
 #include <exception>
 
@@ -115,6 +116,14 @@ void List::setEnd(ListNode* e) {
 }
 
 // ListNode (struct) constructors
+
+List::begin() {
+    return _begin;
+}
+
+List::end() {
+    return _end;
+}
 
 ListNode::ListNode() {
     this->index = 0;

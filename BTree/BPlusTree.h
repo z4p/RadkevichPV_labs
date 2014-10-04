@@ -1,5 +1,7 @@
-#pragma once
+#ifndef BPLUSTREE_H
+#define BPLUSTREE_H
 
+#include <iostream>
 #include "List.h"
 
 const int    D = 6;     // max count of elements in BTreeNode
@@ -17,6 +19,7 @@ struct BTreeNode {
     bool isLeaf;            // является ли нода листом?
     BTreeNode();
     int keysCount();
+    void draw(std::ostream& out);
 //    BTreeNode(DataType val, BTreeNode *parent = nullptr);
 };
 
@@ -29,6 +32,7 @@ public:
     void insert(DataType val);
     void remove(DataType val);
     ListNode* find(DataType val);
+    void draw(std::ostream& out) const;
     
 private:
     BTreeNode *root;
@@ -37,3 +41,5 @@ private:
     void split(BTreeNode* node);                    // разбиение одного узла на два
     void fuse(BTreeNode* node1, BTreeNode* node2);  // объединение двух соседних узлов в один
 };
+
+#endif /* BPLUSTREE_H */
