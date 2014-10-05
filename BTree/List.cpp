@@ -89,7 +89,7 @@ void List::remove(DataType val) {
     length--;
 }
 
-ListNode* List::find(DataType val) const {
+ListNode* List::find(DataType val) {
     ListNode *i = _begin;
     while (i->index < val && i->next) {
         i = i->next;
@@ -116,11 +116,11 @@ void List::setEnd(ListNode* e) {
 
 // ListNode (struct) constructors
 
-List::begin() {
+ListNode* List::begin() {
     return _begin;
 }
 
-List::end() {
+ListNode* List::end() {
     return _end;
 }
 

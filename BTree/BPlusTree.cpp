@@ -134,6 +134,10 @@ void BPlusTree::remove(int val) {
     }
 }
 
+void BPlusTree::share(BTreeNode* node1, BTreeNode* node2) {
+    
+}
+
 void BTreeNode::draw(std::ostream& out) {
     out << "[";
     for(ListNode* lp = this->children.begin(); lp->next; lp = lp->next) {

@@ -1,8 +1,8 @@
 #ifndef BPLUSTREE_H
 #define BPLUSTREE_H
 
-#include <iostream>
 #include "List.h"
+#include <iostream>
 
 const int    D = 6;     // max count of elements in BTreeNode
 const double A = 0.5;   // A*D - min count of elements in BTreeNode
