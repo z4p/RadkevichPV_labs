@@ -1,10 +1,6 @@
 #include <exception>
 
 #include "BPlusTree.h"
-#include "List.h"
-
-class List;
-struct ListNode;
 
 BPlusTree::BPlusTree() {
     this->root = nullptr;
@@ -84,6 +80,25 @@ BTreeNode::BTreeNode() {
 int BTreeNode::keysCount() {
     // if node is right then it has no last delegate
     return children.Length() - (rbro ? 1 : 0);
+}
+
+void BPlusTree::fuse(BTreeNode* node1, BTreeNode* node2) {
+    if (node1->rbro != node2) {
+        // node1 and node2 should be neighbours
+        throw new std::exception();
+    }
+    
+    int nd1Cnt = (node1->keysCount() + node1->keysCount()) / 2;
+    
+    ListNode* lp;
+    if (node1->keysCount() > nd1Cnt) {
+        lp = node1->children.begin();
+        for(int i = 0; i < nd1Cnt; i++) {
+            lp = lp->next;
+        }
+        lp->prev->next = nullptr;
+        
+    }
 }
 
 void BPlusTree::remove(int val) {
