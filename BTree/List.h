@@ -29,7 +29,8 @@ public:
     void insert(DataType val, BTreeNode* child = nullptr);
     void remove(DataType val);
     ListNode* find(DataType val);
-    int Length() const;
+    int getLength() const;
+    void setLength(int len);
 
     ListNode* begin();
     ListNode* end();

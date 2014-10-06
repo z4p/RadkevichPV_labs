@@ -102,8 +102,12 @@ ListNode* List::find(DataType val) {
     }
 }
 
-int List::Length() const {
+int List::getLength() const {
     return length;
+}
+
+void List::setLength(int len) {
+    length = len;
 }
 
 void List::setBegin(ListNode* b) {

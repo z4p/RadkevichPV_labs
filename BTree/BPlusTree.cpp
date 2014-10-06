@@ -9,13 +9,32 @@ BPlusTree::BPlusTree() {
 BPlusTree::BPlusTree(const BPlusTree& orig) {
 }
 
+void BPlusTree::removeNode(BTreeNode* node) {
+    if (!node) {
+        throw new std::exception(); // вообще говоря, такого быть не должно
+    }
+    
+    if (!node->isLeaf) {
+        for(ListNode* lp = node->children.begin(); lp->next; lp = lp->next) {
+            removeNode(lp->child);
+        }
+    } else {
+        delete node;
+    }
+}
+
 BPlusTree::~BPlusTree() {
+    if (!root) {
+        return;
+    }
+    removeNode(root);
 }
 
 void BPlusTree::insert(DataType val) {
     if (!root) {
         root = new BTreeNode();
     }
+
     // searching a place for insert
     BTreeNode *tp = root;
     while (!tp->isLeaf) {
@@ -29,7 +48,7 @@ void BPlusTree::insert(DataType val) {
     tp->children.insert(val);
     
     // if D keys are in this Node then split Node
-    if (tp->children.Length() >= D) {
+    if (tp->children.getLength() >= D) {
         split(tp);
     }
 }
@@ -45,7 +64,7 @@ void BPlusTree::split(BTreeNode* node) {
     
     // splitting
     ListNode *lp = node->children.begin();
-    for(int i = 0; i < node->children.Length()/2; i++) {
+    for(int i = 0; i < node->children.getLength()/2; i++) {
         lp = lp->next;
     }
     bro->children.setBegin( lp->next );
@@ -62,7 +81,7 @@ void BPlusTree::split(BTreeNode* node) {
         node->parent = root;
         bro->parent = root;
     } else {
-        if (node->parent->children.Length() < D-1) {
+        if (node->parent->children.getLength() < D-1) {
             // todo: right node test
             node->parent->children.find( bro->children.end()->index )->child = bro;
             node->parent->children.insert( node->children.end()->index, node );
@@ -78,8 +97,7 @@ BTreeNode::BTreeNode() {
 }
 
 int BTreeNode::keysCount() {
-    // if node is right then it has no last delegate
-    return children.Length() - (rbro ? 1 : 0);
+    return children.getLength();
 }
 
 void BPlusTree::fuse(BTreeNode* node1, BTreeNode* node2) {
@@ -119,14 +137,14 @@ void BPlusTree::remove(int val) {
     
     tp->children.remove(val);
     // if less then A*D keys are in this Node take fuse
-    if (tp->children.Length() <= D*A) {
-        if (tp->lbro && tp->lbro->children.Length() > D*A+1) {
+    if (tp->children.getLength() <= D*A) {
+        if (tp->lbro && tp->lbro->children.getLength() > D*A+1) {
             share(tp, tp->lbro);
-        } else if (tp->rbro && tp->rbro->children.Length() > D*A+1) {
+        } else if (tp->rbro && tp->rbro->children.getLength() > D*A+1) {
             share(tp, tp->rbro);
-        } else if (tp->lbro && tp->lbro->children.Length() <= D*A+1) {
+        } else if (tp->lbro && tp->lbro->children.getLength() <= D*A+1) {
             fuse(tp, tp->lbro);
-        } else if (tp->rbro && tp->rbro->children.Length() <= D*A+1) {
+        } else if (tp->rbro && tp->rbro->children.getLength() <= D*A+1) {
             fuse(tp, tp->rbro);
         } else {
             // removing this node, all its childs will belong to parent
@@ -134,7 +152,7 @@ void BPlusTree::remove(int val) {
     }
 }
 
-void BPlusTree::share(BTreeNode* node1, BTreeNode* node2) {
+void BPlusTree::share(BTreeNode* lnode, BTreeNode* rnode) {
     
 }
 
@@ -154,4 +172,12 @@ void BPlusTree::draw(std::ostream& out) const {
         out << std::endl;
         tp = tp->children.begin()->child;
     } while (!tp->isLeaf);
+}
+
+ListNode* BPlusTree::find(DataType val) {
+    if (!root) {
+        // tree is empty
+        throw new std::exception();
+    }
+    
 }

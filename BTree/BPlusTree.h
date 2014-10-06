@@ -4,7 +4,7 @@
 #include "List.h"
 #include <iostream>
 
-const int    D = 6;     // max count of elements in BTreeNode
+const int    D = 4;     // max count of elements in BTreeNode
 const double A = 0.5;   // A*D - min count of elements in BTreeNode
 
 struct BTreeNode {
@@ -37,7 +37,11 @@ public:
 private:
     BTreeNode *root;
 
-    void share(BTreeNode* node1, BTreeNode* node2); // перераспределение элементов соседних узлов
+    void removeNode(BTreeNode* node);
+    // removes node and all its children
+    // IT JUST REALISE ALLOCATED MEMORY, IT DOESN'T CHANGE PARENT'S LINK
+    
+    void share(BTreeNode* lnode, BTreeNode* rnode); // перераспределение элементов соседних узлов
     void split(BTreeNode* node);                    // разбиение одного узла на два
     void fuse(BTreeNode* node1, BTreeNode* node2);  // объединение двух соседних узлов в один
 };
