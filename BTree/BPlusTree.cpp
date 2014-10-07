@@ -1,5 +1,4 @@
 #include <exception>
-
 #include "BPlusTree.h"
 
 BPlusTree::BPlusTree() {
@@ -158,7 +157,7 @@ void BPlusTree::share(BTreeNode* lnode, BTreeNode* rnode) {
 
 void BTreeNode::draw(std::ostream& out) {
     out << "[";
-    for(ListNode* lp = this->children.begin(); lp->next; lp = lp->next) {
+    for(ListNode* lp = this->children.begin(); lp; lp = lp->next) {
         out << lp->index << (lp->next ? ',' : ']');
     }
 }
@@ -166,12 +165,12 @@ void BTreeNode::draw(std::ostream& out) {
 void BPlusTree::draw(std::ostream& out) const {
     BTreeNode *tp = root;
     do {
-        for(BTreeNode *ti = tp; ti->rbro; ti = ti->rbro) {
+        for(BTreeNode *ti = tp; ti; ti = ti->rbro) {
             ti->draw(out);
         }
         out << std::endl;
         tp = tp->children.begin()->child;
-    } while (!tp->isLeaf);
+    } while (tp);
 }
 
 ListNode* BPlusTree::find(DataType val) {

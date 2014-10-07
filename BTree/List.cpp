@@ -31,12 +31,12 @@ void List::insert(DataType val, BTreeNode* child) {
         while (i->index < val && i->next) {
             i = i->next;
         }
-    if (i->index == val) {
-        // index is a unique key. If the same index exists, an exception will be thrown
-        throw std::exception();
-    }
+        if (i->index == val) {
+            // index is a unique key. If the same index exists, an exception will be thrown
+            throw std::exception();
+        }
         
-        if (!i->next) {
+        if (!i->next && i->index < val) {
             // inserting at the end
             i->next = lp;
             lp->prev = i;
