@@ -18,8 +18,10 @@ struct BTreeNode {
     BTreeNode *lbro, *rbro; // ссылки на левого и правого брата
     bool isLeaf;            // является ли нода листом?
     BTreeNode();
+    BTreeNode(const BTreeNode& orig);
     int keysCount();
     void draw(std::ostream& out);
+    DataType max(); 
 //    BTreeNode(DataType val, BTreeNode *parent = nullptr);
 };
 
@@ -27,6 +29,9 @@ class BPlusTree {
 public:
     BPlusTree();
     BPlusTree(const BPlusTree& orig);
+    BPlusTree(BPlusTree&& orig);
+    BPlusTree& operator=(const BPlusTree& rv);
+    BPlusTree& operator=(BPlusTree&& rv);
     ~BPlusTree();
     
     void insert(DataType val);

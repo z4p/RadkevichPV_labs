@@ -8,9 +8,53 @@ List::List() {
 }
 
 List::List(const List& orig) {
+    this->_begin = nullptr;
+    this->_end = nullptr;
+    this->length = 0;
+    ListNode *lp = orig._begin;
+    while (lp) {
+        this->insert(lp->index, lp->child);
+        lp = lp->next;
+    }
+}
+
+List& List::operator=(List& rv) {
+    if (&rv != this) {
+        this->clear();
+        this->_begin = nullptr;
+        this->_end = nullptr;
+        this->length = 0;
+        ListNode *lp = rv._begin;
+        while (lp) {
+            this->insert(lp->index, lp->child);
+            lp = lp->next;
+        }
+    }
+    return *this;
+}
+
+List& List::operator=(List&& rv) {
+    if (&rv != this) {
+        this->clear();
+        this->_begin = nullptr;
+        this->_end = nullptr;
+        this->length = 0;
+        ListNode *lp = rv._begin;
+        ListNode *ilp = _begin;
+        while (lp) {
+            std::swap(ilp, lp);
+            this->insert(lp->index, lp->child);
+            lp = lp->next;
+        }
+    }
+    return *this;
 }
 
 List::~List() {
+    clear();
+}
+
+void List::clear() {
     ListNode *i = _begin;
     ListNode *p;
     while (i) {
@@ -19,6 +63,7 @@ List::~List() {
         delete p;
     }
     _begin = _end = nullptr;
+    length = 0;    
 }
 
 void List::insert(DataType val, BTreeNode* child) {
@@ -63,10 +108,10 @@ void List::remove(DataType val) {
     }
     
     ListNode *i = _begin;
-    while (i->index < val && i->next) {
+    while (i && i->index < val) {
         i = i->next;
     }
-    if (i->index >= val) {
+    if (!i || i->index > val) {
         // can't find the key <val> to remove
         throw std::exception();
     }
@@ -91,14 +136,14 @@ void List::remove(DataType val) {
 
 ListNode* List::find(DataType val) {
     ListNode *i = _begin;
-    while (i->index < val && i->next) {
+    while (i && i->index < val) {
         i = i->next;
     }
     if (i->index == val) {
         return i;
     } else {
         // can't find the key <val>
-        throw std::exception();
+        return nullptr;
     }
 }
 

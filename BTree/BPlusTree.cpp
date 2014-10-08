@@ -5,7 +5,44 @@ BPlusTree::BPlusTree() {
     this->root = nullptr;
 }
 
-BPlusTree::BPlusTree(const BPlusTree& orig) {
+BPlusTree::BPlusTree(const BPlusTree& orig) : root(nullptr) {
+    BTreeNode *tp = orig.root;
+    while (!tp->isLeaf) {
+        tp = tp->children.begin()->child;
+    }
+    while (tp) {
+        for(ListNode* lp = tp->children.begin(); lp; lp = lp->next) {
+            insert(lp->index);
+        }
+        tp = tp->rbro;
+    }
+}
+
+BPlusTree::BPlusTree(BPlusTree&& orig) : root(nullptr) {
+    this->root = std::move(orig.root);
+}
+
+BPlusTree& BPlusTree::operator=(const BPlusTree& rv) {
+    if (&rv != this) {
+        this->removeNode(root);
+
+        BTreeNode *tp = rv.root;
+        while (!tp->isLeaf) {
+            tp = tp->children.begin()->child;
+        }
+        while (tp) {
+            for(ListNode* lp = tp->children.begin(); lp; lp = lp->next) {
+                insert(lp->index);
+            }
+            tp = tp->rbro;
+        }
+    }
+    return *this;
+}
+
+BPlusTree& BPlusTree::operator=(BPlusTree&& rv) {
+    std::swap(rv.root, this->root);
+    return *this;
 }
 
 void BPlusTree::removeNode(BTreeNode* node) {
@@ -14,7 +51,7 @@ void BPlusTree::removeNode(BTreeNode* node) {
     }
     
     if (!node->isLeaf) {
-        for(ListNode* lp = node->children.begin(); lp->next; lp = lp->next) {
+        for(ListNode* lp = node->children.begin(); lp; lp = lp->next) {
             removeNode(lp->child);
         }
     } else {
@@ -36,20 +73,45 @@ void BPlusTree::insert(DataType val) {
 
     // searching a place for insert
     BTreeNode *tp = root;
+    bool f = true;
     while (!tp->isLeaf) {
-        for(ListNode* lp = tp->children.begin(); lp->next; lp = lp->next) {
+        f = false;
+        for(ListNode* lp = tp->children.begin(); lp; lp = lp->next) {
             if (lp->index > val) {
                 tp = lp->child;
+                f = true;
                 break;
             }
         }
+        if (!f) {
+            // right node (max)
+            while (!tp->isLeaf) {
+                tp = tp->children.end()->child;
+            }
+        }
     }
-    tp->children.insert(val);
+    
+    if(!f) {
+        //fixing delegates
+        int tmp = tp->max();
+        ListNode *d = tp->parent->children.find( tp->max() );
+        tp->children.insert(val);
+        while (d && d->child->parent && d->index == d->child->parent->max()) {
+            d->index = val;
+            d = d->child->parent->children.find( tmp );
+        }
+    } else {
+        tp->children.insert(val);
+    }
+    
     
     // if D keys are in this Node then split Node
     if (tp->children.getLength() >= D) {
         split(tp);
     }
+    
+    this->draw(std::cout);
+    std::cout << "\n-----------\n";
 }
 
 void BPlusTree::split(BTreeNode* node) {
@@ -63,28 +125,31 @@ void BPlusTree::split(BTreeNode* node) {
     
     // splitting
     ListNode *lp = node->children.begin();
-    for(int i = 0; i < node->children.getLength()/2; i++) {
+    int len1 = node->keysCount()/2;
+    int len2 = node->keysCount() - len1;
+    for(int i = 0; i < len1; i++) {
         lp = lp->next;
     }
-    bro->children.setBegin( lp->next );
+    node->children.setLength( len1 );
+    bro->children.setLength( len2 );
+    bro->children.setBegin( lp );
     bro->children.setEnd( node->children.end() );
-    node->children.setEnd( lp );
+    node->children.setEnd( lp->prev );
+    lp->prev->next = nullptr;
+    lp->prev = nullptr;
     
     // fixing of delegates
     if (node == root) {
         BTreeNode *tp = new BTreeNode();
         tp->isLeaf = false;
-        tp->children.insert( node->children.end()->index, node );
-        tp->children.insert( 0, bro );
+        tp->children.insert( node->max(), node );
+        tp->children.insert( bro->max(), bro );
         root = tp;
         node->parent = root;
         bro->parent = root;
     } else {
-        if (node->parent->children.getLength() < D-1) {
-            // todo: right node test
-            node->parent->children.find( bro->children.end()->index )->child = bro;
-            node->parent->children.insert( node->children.end()->index, node );
-        }
+        node->parent->children.find( bro->max() )->child = bro;
+        node->parent->children.insert( node->max(), node );
     }
 }
 
@@ -93,6 +158,14 @@ BTreeNode::BTreeNode() {
     this->rbro = nullptr;
     this->parent = nullptr;
     this->isLeaf = true;
+}
+
+BTreeNode::BTreeNode(const BTreeNode& orig) {
+    children = List(orig.children);
+    lbro = orig.lbro;
+    rbro = orig.rbro;
+    isLeaf = orig.isLeaf;
+    parent = orig.parent;
 }
 
 int BTreeNode::keysCount() {
@@ -105,16 +178,9 @@ void BPlusTree::fuse(BTreeNode* node1, BTreeNode* node2) {
         throw new std::exception();
     }
     
-    int nd1Cnt = (node1->keysCount() + node1->keysCount()) / 2;
-    
-    ListNode* lp;
-    if (node1->keysCount() > nd1Cnt) {
-        lp = node1->children.begin();
-        for(int i = 0; i < nd1Cnt; i++) {
-            lp = lp->next;
-        }
-        lp->prev->next = nullptr;
-        
+    node1->parent->children.remove(node1->max());
+    for(ListNode *lp = node1->children.begin(); lp; lp = lp->next) {
+        node2->children.insert(lp->index, lp->child);
     }
 }
 
@@ -152,7 +218,32 @@ void BPlusTree::remove(int val) {
 }
 
 void BPlusTree::share(BTreeNode* lnode, BTreeNode* rnode) {
+    int nd1Cnt = (lnode->keysCount() + rnode->keysCount()) / 2;
+    int nd2Cnt = lnode->keysCount() + rnode->keysCount() - nd1Cnt;
+    ListNode *lp;
     
+    if (lnode->keysCount() < rnode->keysCount()) {
+        lp = lnode->children.end();
+        lp->next = rnode->children.begin();
+        rnode->children.begin()->prev = lp;
+        for(int i = lnode->keysCount(); i < nd1Cnt; i++) {
+            lp = lp->next;
+        }
+    } else {
+        lp = rnode->children.begin();
+        lp->prev = lnode->children.end();
+        lnode->children.end()->next = lp;
+        for(int i = lnode->keysCount(); i > nd1Cnt; i--) {
+            lp = lp->prev;
+        }
+        lp = lp->prev;
+    }
+    lnode->children.setEnd(lp);
+    rnode->children.setBegin(lp->next);
+    lp->next->prev = nullptr;
+    lp->next = nullptr;
+    lnode->children.setLength(nd1Cnt);
+    rnode->children.setLength(nd2Cnt);
 }
 
 void BTreeNode::draw(std::ostream& out) {
@@ -179,4 +270,26 @@ ListNode* BPlusTree::find(DataType val) {
         throw new std::exception();
     }
     
+    BTreeNode *tp = root;
+    bool f;
+    while (!tp->isLeaf) {
+        f = false;
+        for(ListNode* lp = tp->children.begin(); lp; lp = lp->next) {
+            if (lp->index > val) {
+                tp = lp->child;
+                f = true;
+                break;
+            }
+        }
+        if (!f) {
+            return nullptr;
+        }
+    }
+    
+    return tp->children.find(val);
 }
+
+DataType BTreeNode::max() {
+    return this->children.end()->index;
+}
+

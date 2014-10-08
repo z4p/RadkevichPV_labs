@@ -24,6 +24,8 @@ class List {
 public:
     List();
     List(const List& orig);
+    List& operator=(List &orig);
+    List& operator=(List &&orig);
     ~List();
     
     void insert(DataType val, BTreeNode* child = nullptr);
@@ -40,6 +42,7 @@ public:
 private:
     ListNode *_begin, *_end;
     int length;
+    void clear();
 };
 
 #endif /* LIST_H */
