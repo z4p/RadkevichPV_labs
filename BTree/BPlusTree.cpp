@@ -109,12 +109,11 @@ void BPlusTree::insert(DataType val) {
     if (tp->children.getLength() >= D) {
         split(tp);
     }
-    
-    this->draw(std::cout);
-    std::cout << "\n-----------\n";
 }
 
 void BPlusTree::split(BTreeNode* node) {
+    DataType m = node->max();
+    
     // new right Node
     BTreeNode *bro = new BTreeNode();
     bro->parent = node->parent;
@@ -148,7 +147,8 @@ void BPlusTree::split(BTreeNode* node) {
         node->parent = root;
         bro->parent = root;
     } else {
-        node->parent->children.find( bro->max() )->child = bro;
+        ListNode *par = node->parent->children.find( m );
+        par->child = bro;
         node->parent->children.insert( node->max(), node );
     }
 }
@@ -212,7 +212,9 @@ void BPlusTree::remove(int val) {
         } else if (tp->rbro && tp->rbro->children.getLength() <= D*A+1) {
             fuse(tp, tp->rbro);
         } else {
-            // removing this node, all its childs will belong to parent
+            for(ListNode *lp = tp->children.begin(); lp; lp = lp->next) {
+                tp->parent->children.insert(lp->index, lp->child);
+            }
         }
     }
 }
@@ -259,7 +261,9 @@ void BPlusTree::draw(std::ostream& out) const {
         for(BTreeNode *ti = tp; ti; ti = ti->rbro) {
             ti->draw(out);
         }
-        out << std::endl;
+        if (!tp->isLeaf) {
+            out << std::endl;
+        }
         tp = tp->children.begin()->child;
     } while (tp);
 }
