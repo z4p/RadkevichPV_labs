@@ -20,7 +20,7 @@ struct BTreeNode {
     BTreeNode();
     BTreeNode(const BTreeNode& orig);
     int keysCount();
-    void draw(std::ostream& out);
+    void draw(std::ostream& out);//калі ёсць паводзіны, то гэта ужо хутчэй клас, а не структура з адпаведнымі наступствамі.
     DataType max(); 
 //    BTreeNode(DataType val, BTreeNode *parent = nullptr);
 };

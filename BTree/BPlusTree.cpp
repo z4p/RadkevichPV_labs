@@ -47,7 +47,7 @@ BPlusTree& BPlusTree::operator=(BPlusTree&& rv) {
 
 void BPlusTree::removeNode(BTreeNode* node) {
     if (!node) {
-        throw new std::exception(); // вообще говоря, такого быть не должно
+        throw new std::exception(); // вообще говоря, такого быть не должно //тады тут лепш assert
     }
     
     if (!node->isLeaf) {
@@ -122,7 +122,7 @@ void BPlusTree::split(BTreeNode* node) {
     bro->isLeaf = node->isLeaf;
     node->rbro = bro;
     
-    // splitting
+    // splitting //памятую дзесьці для двусвязнага спіса выкарыстоўваў сустрэчу двух паказальнікаў па сярэдзіне сасіскі :))
     ListNode *lp = node->children.begin();
     int len1 = node->keysCount()/2;
     int len2 = node->keysCount() - len1;
@@ -175,7 +175,7 @@ int BTreeNode::keysCount() {
 void BPlusTree::fuse(BTreeNode* node1, BTreeNode* node2) {
     if (node1->rbro != node2) {
         // node1 and node2 should be neighbours
-        throw new std::exception();
+        throw new std::exception();// мне паlаецца гэта таксама хутчэй assert
     }
     
     node1->parent->children.remove(node1->max());

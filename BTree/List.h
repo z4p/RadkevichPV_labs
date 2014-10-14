@@ -24,6 +24,7 @@ class List {
 public:
     List();
     List(const List& orig);
+	//а што з канструктарам руху?
     List& operator=(List &orig);
     List& operator=(List &&orig);
     ~List();

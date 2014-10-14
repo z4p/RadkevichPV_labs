@@ -33,6 +33,7 @@ List& List::operator=(List& rv) {
     return *this;
 }
 
+//можна прасцей, дастаткова абмяняць месцамі ключавыя паказальнікі (як бы абмяняцца зместам), бо для часовага аб'екта потым будзе вызваны деструктар.
 List& List::operator=(List&& rv) {
     if (&rv != this) {
         this->clear();
@@ -102,7 +103,7 @@ void List::insert(DataType val, BTreeNode* child) {
 }
 
 void List::remove(DataType val) {
-    if (!_begin) {
+    if (!_begin) {// ёсць падыход што пры выдаленні з пустой структуры нічога не адбываецца (прыблізна тое ж, што delete nullptr)
         // removing from empty list
         throw std::exception();
     }
