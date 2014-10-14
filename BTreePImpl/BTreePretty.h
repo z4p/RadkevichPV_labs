@@ -10,8 +10,8 @@ public:
     BTreePretty(const BTreePretty& orig);
     ~BTreePretty();
     
-    void draw();
 private:
+    void drawNode(BTreeNode* node) override; 
 };
 
 #endif	/* BTREEPRETTY_H */

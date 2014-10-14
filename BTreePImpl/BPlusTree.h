@@ -37,7 +37,6 @@ public:
     void insert(DataType val);
     void remove(DataType val);
     ListNode* find(DataType val);
-    void draw(std::ostream& out) const;
     
 private:
     BTreeNode *root;

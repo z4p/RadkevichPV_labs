@@ -10,9 +10,10 @@ public:
     BTreeConsole(const BTreeConsole& orig);
     ~BTreeConsole();
     
-    virtual void draw();
-private:
+    void draw(std::ostream& out) const;
     
+private:
+    virtual void drawNode(BTreeNode* node);
 };
 
 #endif	/* BTREECONSOLE_H */
