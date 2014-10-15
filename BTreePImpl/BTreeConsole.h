@@ -8,12 +8,15 @@ class BTreeConsole : public BTreeBridge {
 public:
     BTreeConsole();
     BTreeConsole(const BTreeConsole& orig);
+    BTreeConsole(const BTreeConsole&& orig);
+    BTreeConsole& operator=(const BTreeConsole& orig);
+    BTreeConsole& operator=(const BTreeConsole&& orig);
     ~BTreeConsole();
     
-    void draw(std::ostream& out) const;
+    void draw(std::ostream& out);
     
-private:
-    virtual void drawNode(BTreeNode* node);
+protected:
+    virtual void drawNode(BTreeNode& node, std::ostream& out);
 };
 
 #endif	/* BTREECONSOLE_H */

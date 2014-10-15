@@ -248,17 +248,10 @@ void BPlusTree::share(BTreeNode* lnode, BTreeNode* rnode) {
     rnode->children.setLength(nd2Cnt);
 }
 
-void BTreeNode::draw(std::ostream& out) {
-    out << "[";
-    for(ListNode* lp = this->children.begin(); lp; lp = lp->next) {
-        out << lp->index << (lp->next ? ',' : ']');
-    }
-}
-
-ListNode* BPlusTree::find(DataType val) {
+bool BPlusTree::find(DataType val) {
     if (!root) {
         // tree is empty
-        throw new std::exception();
+        return false;
     }
     
     BTreeNode *tp = root;
@@ -273,14 +266,50 @@ ListNode* BPlusTree::find(DataType val) {
             }
         }
         if (!f) {
-            return nullptr;
+            return false;
         }
     }
     
-    return tp->children.find(val);
+    return true;
 }
 
 DataType BTreeNode::max() {
     return this->children.end()->index;
 }
 
+bool BPlusTree::getCurrentNode(BTreeNode& node) {
+    if (!root) {
+        return false;
+    }
+    
+    if (!nodeIterator) {
+        nodeIterator = root;
+    }
+
+    node.children = nodeIterator->children;
+    node.isLeaf = nodeIterator->isLeaf;
+    node.parent = nodeIterator->parent;
+    node.lbro = nodeIterator->lbro;
+    node.rbro = nodeIterator->rbro;
+
+    // move next
+    // if rbro exists - set our iterator at rbro
+    if (nodeIterator->rbro) {
+        nodeIterator = nodeIterator->rbro;
+    } else {
+        // if we have no rbro and have no child - there was the last node!
+        if (nodeIterator->isLeaf) {
+            nodeIterator = nullptr;
+            return false;
+        } else {
+            // if we have children - go deeper and go to the left, while we can
+            nodeIterator = nodeIterator->children.begin()->child;
+            while (nodeIterator->lbro) {
+                nodeIterator = nodeIterator->lbro;
+            }
+            // and now we're at the first child on the deeper level
+        }
+    }
+
+    return true;
+}
