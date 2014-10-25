@@ -2,11 +2,9 @@
 #include "AsyncServer.h"
 #include "stdio.h"
 
-using namespace std;
-
 const int N = 9;
 
-Request rs[N] = {
+Request rs1[N] = {
     {OPERATION_MUL, 2, 2, 0},
     {OPERATION_MUL, 3, 3, 0},
     {OPERATION_SUM, 0, 1, 0},
@@ -18,24 +16,43 @@ Request rs[N] = {
     {OPERATION_SUM, 0, 4, 0},
 };
 
+
+Request rs2[N] = {
+    {OPERATION_SUM, 0, 1, 0},
+    {OPERATION_SUM, 0, 2, 0},
+    {OPERATION_SUM, 0, 3, 0},
+    {OPERATION_SUM, 0, 4, 0},
+    {OPERATION_SUM, 0, 5, 0},
+    {OPERATION_SUM, 0, 6, 0},
+    {OPERATION_MUL, 2, 2, 0},
+    {OPERATION_MUL, 3, 3, 0},
+    {OPERATION_MUL, 4, 4, 0},
+};
+
+
+
 int main(int argc, char** argv) {
-    Server *mt = new MultiThreadServer(); 
+    Server *mt = new MultiThreadServer();
     Server *as = new AsyncServer();
-    
+
+    Request *rs = rs2;
+
     for(int i = 0; i < N; i++) {
         mt->addClientRequest( rs[i] );
         as->addClientRequest( rs[i] );
     }
-    
-    printf("time\tmultithread\t| async");
-    for(int tm = 0; tm < 30; tm++) {
+
+
+    printf("time\t| mt\t| async");
+    for(int tm = 0; tm < 25; tm++) {
         mt->tick();
         as->tick();
-        printf("\n%2d: ", tm);
+        printf("\n%2d: \t|", tm);
         mt->sendResult();
         printf("\t| ");
         as->sendResult();
     }
-    
+    printf("\n\n");
+
     return 0;
 }

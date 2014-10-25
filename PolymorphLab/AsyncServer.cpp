@@ -19,16 +19,20 @@ void AsyncServer::tick() {
                 heavyRequests.push_back(r);
                 break;
             default:
-                // Неизвестная операция. Неплохо было бы отсеять её на этапе получения...
                 printf("unknown operation '%d' in tick()\n", r.operation);
-                //throw std::exception();
+                throw std::exception();
                 break;
         }
-        
-        for(std::list<Request>::iterator i = heavyRequests.begin(); i != heavyRequests.end(); ++i) {
-            (*i).needproctime--;
+    }
+
+    if (!heavyRequests.empty()) {
+        for(std::deque<Request>::iterator i = heavyRequests.begin(); !heavyRequests.empty() && i != heavyRequests.end(); ++i) {
             if ((*i).needproctime == 0) {
                 resultAdd(*i);
+                std::deque<Request>::iterator t = i;
+                heavyRequests.erase(t);
+            } else {
+                (*i).needproctime--;
             }
         }
     }

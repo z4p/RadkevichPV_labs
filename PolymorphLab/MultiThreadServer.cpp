@@ -13,7 +13,7 @@ MultiThreadServer::~MultiThreadServer() {
 }
 
 void MultiThreadServer::tick() {
-    printf("<mt tick emptyRequests=%d>", requestsEmpty());
+    //printf("<mt tick emptyRequests=%d>", requestsEmpty());
     for(int i = 0; i < threads_count; i++) {
         if (threads[i].needproctime > 0) {
             threads[i].needproctime--;
@@ -32,10 +32,14 @@ void MultiThreadServer::tick() {
                         threads[i].needproctime = TIME_MUL;
                         break;
                     default:
-                        // Неизвестная операция. Неплохо было бы отсеять её на этапе получения...
                         printf("unknown operation '%d' in tick()\n", threads[i].operation);
-                        //throw std::exception();
+                        throw std::exception();
                         break;
+                }
+                threads[i].needproctime--;
+                if (threads[i].needproctime == 0) {
+                    // success
+                    resultAdd(threads[i]);
                 }
             }
         }

@@ -1,5 +1,6 @@
 #include "Server.h"
 
+
 // public section
 
 Server::Server() {}
@@ -52,14 +53,15 @@ void Server::printRes(Request r) const {
             ch = '+';
             break;
         case OPERATION_MUL:
-            res = r.a + r.b;
+            res = r.a * r.b;
             ch = 'x';
             break;
         default:
-            // Неизвестная операция? как она сюда попала? ладно, может
-            // наследник - раздолбай добавил новую операцию, но не перегрузил вывод
+            // Неизвестная операция? как она сюда попала? ладно, может для
+            // наследника добавили новую операцию, но не перегрузили вывод
             printf("unknown operation '%d' in printRes()\n", r.operation);
-            // throw std::exception();
+            throw std::exception();
             break;
     }
+    printf("%d%c%d=%d", r.a, ch, r.b, res);
 }

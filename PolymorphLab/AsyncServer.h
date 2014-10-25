@@ -2,7 +2,7 @@
 #define	ASYNCSERVER_H
 
 #include "Server.h"
-#include <list>
+#include <deque>
 
 class AsyncServer : public Server {
 public:
@@ -10,9 +10,9 @@ public:
     AsyncServer(const AsyncServer& orig);
     virtual ~AsyncServer();
 
-    virtual void tick() override;   
-protected:    
-    std::list<Request> heavyRequests;
+    virtual void tick() override;
+protected:
+    std::deque<Request> heavyRequests;
 };
 
 #endif	/* ASYNCSERVER_H */
