@@ -12,6 +12,8 @@ MultiThreadServer::~MultiThreadServer() {
     delete [] threads;
 }
 
+// паўторныя кускі кода у абодвух галінах.
+
 void MultiThreadServer::tick() {
     //printf("<mt tick emptyRequests=%d>", requestsEmpty());
     for(int i = 0; i < threads_count; i++) {

@@ -30,7 +30,7 @@ Request rs2[N] = {
 };
 
 
-
+//можна зрабіць масіў паказальнікаў
 int main(int argc, char** argv) {
     Server *mt = new MultiThreadServer();
     Server *as = new AsyncServer();
