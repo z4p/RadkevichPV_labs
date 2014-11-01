@@ -2,5 +2,6 @@
 
 | N |Task         |
 |:--|:------------|
-|1  |Lab2 T3 (vector)    |
-|2  |B+ Tree   |
+|2  |Lab2 T3 (vector)    |
+|3  |B+ Tree   |
+|4  |MultiThread/Async Servers |
