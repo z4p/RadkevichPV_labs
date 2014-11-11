@@ -4,5 +4,5 @@
 |:--|:------------|
 |2  |Lab2 T3 (vector)    |
 |3  |B+ Tree   |
-|3  |B+ Tree pimpl + NVI |
+|4  |B+ Tree pimpl + NVI |
 |5  |MultiThread/Async Servers |
