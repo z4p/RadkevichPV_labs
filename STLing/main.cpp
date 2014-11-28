@@ -30,7 +30,7 @@ public:
     bool operator()(string s) {
         string g("aeiouy");
         int c = count_if(s.begin(), s.end(), [g](char ch){ return g.find(ch) != string::npos; });
-        return c % 2;
+        return c % 2;//толькі у вас атрымалася наадварот нецотная колькасць, а так файна з гумарам 
     }
 };
 
