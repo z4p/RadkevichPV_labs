@@ -17,20 +17,24 @@
 
 using namespace std;
 
-class isKentavr {
+class isNotKentavr {
 private:
 public:
-    isKentavr() = default;
-    isKentavr(isKentavr& obj) = default;
-    isKentavr(isKentavr&& obj) = default;
-    isKentavr& operator=(isKentavr& rv) = default;
-    isKentavr& operator=(isKentavr&& rv) = default;
-    ~isKentavr() = default;
+    isNotKentavr() = default;
+    isNotKentavr(isNotKentavr& obj) = default;
+    isNotKentavr(isNotKentavr&& obj) = default;
+    isNotKentavr& operator=(isNotKentavr& rv) = default;
+    isNotKentavr& operator=(isNotKentavr&& rv) = default;
+    ~isNotKentavr() = default;
     
     bool operator()(string s) {
         string g("aeiouy");
-        int c = count_if(s.begin(), s.end(), [g](char ch){ return g.find(ch) != string::npos; });
-        return c % 2;//толькі у вас атрымалася наадварот нецотная колькасць, а так файна з гумарам 
+        int c = count_if(s.begin(), s.end(), [g](char ch){ return g.find(ch) != 
+string::npos; });
+        return c % 2;//толькі у вас атрымалася наадварот нецотная колькасць, а 
+//так файна з гумарам 
+        // не, четная, просто предикат писался для отсеивания некентавров. 
+// Посему неграмотным было его название. Пофикшено
     }
 };
 
@@ -45,7 +49,7 @@ int main() {
     f.close();
     
     vector<string>::iterator end;
-    end = remove_if(v.begin(), v.end(), isKentavr()); // отсеяли некентавров
+    end = remove_if(v.begin(), v.end(), isNotKentavr()); // отсеяли некентавров
     end = remove_if(v.begin(), end, [](string s){ return s.length() < 8; } ); // отсеяли кентавров-плебеев
     
     cout << "Подходящие кентавры: " << endl;
