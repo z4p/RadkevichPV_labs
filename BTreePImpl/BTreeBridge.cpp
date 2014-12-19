@@ -9,12 +9,14 @@ BTreeBridge::BTreeBridge(const BTreeBridge& orig) : pimpl(nullptr) {
 }
 
 BTreeBridge::BTreeBridge(const BTreeBridge&& orig) : pimpl(nullptr) {
-    pimpl = std::move(orig.pimpl);
+    std::swap(this->pimpl, orig.pimpl);
+    //this->pimpl = std::move(orig.pimpl);
 }
 
 BTreeBridge& BTreeBridge::operator=(const BTreeBridge& rv) {
     if (&rv != this) {
         delete pimpl;
+        pimpl = nullptr;
         pimpl = new BPlusTree(*rv.pimpl);
     }
     return *this;
