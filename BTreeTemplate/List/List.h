@@ -9,42 +9,17 @@
  * Вставка происходит в отсортированный список (список отсортирован всегда)
  */
 
-//class BPlusTree;
-//struct BTreeNode;
-
-
-template <typename T, typename V>
-struct ListNode {
-    ListNode *prev, *next;
-    T index;
-    V value;
-    //BTreeNode *child;
-    ListNode() {
-        this->index = 0;
-        this->value = 0;
-        this->next = nullptr;
-        this->prev = nullptr;
-        //this->child = nullptr;
-    }
-
-    ListNode(T key, V val/*, BTreeNode* child*/) {
-        this->index = key;
-        this->value = val;
-        this->next = nullptr;
-        this->prev = nullptr;
-    //     this->child = child;
-    }
-};
-
+template <typename T, typename V> class List;
 
 template<typename T, typename V>
 class ListIterator {
 private:
-    ListNode<T, V> *currentNode;
+    List *currentNode;
+    
 public:
     ListIterator(): currentNode(nullptr) {}
     
-    ListIterator(ListNode<T, V> *currentNode): currentNode(currentNode) {}
+    ListIterator(List<T, V>::ListNode *currentNode): currentNode(currentNode) {}
     
     ListIterator(const ListIterator& rv) {
         currentNode = rv.currentNode;
@@ -81,14 +56,37 @@ public:
 template <typename T, typename V>
 class List {
 private:
-    typedef ListNode<T,V> Node;
+    friend Iterator;
+    
+    struct ListNode {
+        ListNode *prev, *next;
+        T index;
+        V value;
+        //BTreeNode *child;
+        ListNode() {
+            this->index = 0;
+            this->value = 0;
+            this->next = nullptr;
+            this->prev = nullptr;
+            //this->child = nullptr;
+        }
+
+        ListNode(T key, V val/*, BTreeNode* child*/) {
+            this->index = key;
+            this->value = val;
+            this->next = nullptr;
+            this->prev = nullptr;
+        //     this->child = child;
+        }
+    };
+    
+    typedef ListNode Node;
     
     Node *_begin, *_end;
     int _length;
     
 public:
     typedef ListIterator<T, V> Iterator;
-    friend Iterator;
     
     List() {
         this->_begin = nullptr;
