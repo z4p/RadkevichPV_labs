@@ -1,22 +1,21 @@
 #ifndef LISTITERATOR_H
 #define	LISTITERATOR_H
 
-#include "List.h"
-
-template<typename T, typename V>
+template<typename T, typename V, class TNode>
 class ListIterator {
 private:
-    ListNode<T, V> *currentNode;
+    TNode *currentNode;
+    
 public:
     ListIterator(): currentNode(nullptr) {}
     
-    ListIterator(ListNode<T, V> *currentNode): currentNode(currentNode) {}
+    ListIterator(TNode *currentNode): currentNode(currentNode) {}
     
     ListIterator(const ListIterator& rv) {
         currentNode = rv.currentNode;
     }
     
-    ListIterator<T, V>& operator=(const ListIterator<T, V>& rv) {
+    ListIterator<T, V, TNode>& operator=(const ListIterator<T, V, TNode>& rv) {
         currentNode = rv.currentNode;
     }
     
@@ -34,7 +33,7 @@ public:
         }
     }
     
-    bool operator!=(const ListIterator<T, V>& rv) {
+    bool operator!=(const ListIterator<T, V, TNode>& rv) {
         return currentNode != rv.currentNode;
     }
     
@@ -42,5 +41,6 @@ public:
         return currentNode->value;
     }
 };
+
 
 #endif	/* LISTITERATOR_H */

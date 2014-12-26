@@ -13,7 +13,7 @@ public:
 class DuplicateKeyException : public std::exception {
 public:
     virtual const char* what() const throw() {
-        return "Inserting element with the same key is disabled";
+        return "Inserting of elements with the same keys is disabled";
     }
 };
 

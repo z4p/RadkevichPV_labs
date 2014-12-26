@@ -1,63 +1,18 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <iostream>
 #include "ListExceptions.h"
+#include "ListIterator.h"
 
 /*
  * List - двусвязный список для B+деревьев
  * Вставка происходит в отсортированный список (список отсортирован всегда)
  */
 
-template <typename T, typename V> class List;
-
-template<typename T, typename V>
-class ListIterator {
-private:
-    List *currentNode;
-    
-public:
-    ListIterator(): currentNode(nullptr) {}
-    
-    ListIterator(List<T, V>::ListNode *currentNode): currentNode(currentNode) {}
-    
-    ListIterator(const ListIterator& rv) {
-        currentNode = rv.currentNode;
-    }
-    
-    ListIterator<T, V>& operator=(const ListIterator<T, V>& rv) {
-        currentNode = rv.currentNode;
-    }
-    
-    ~ListIterator() {}
-    
-    void operator++() {
-        if (currentNode->next) {
-            currentNode = currentNode->next;
-        }   
-    }
-    
-    void operator--() {
-        if (currentNode->prev) {
-            currentNode = currentNode->prev;
-        }
-    }
-    
-    bool operator!=(const ListIterator<T, V>& rv) {
-        return currentNode != rv.currentNode;
-    }
-    
-    V operator*() {
-        return currentNode->value;
-    }
-};
-
 
 template <typename T, typename V>
 class List {
 private:
-    friend Iterator;
-    
     struct ListNode {
         ListNode *prev, *next;
         T index;
@@ -86,7 +41,8 @@ private:
     int _length;
     
 public:
-    typedef ListIterator<T, V> Iterator;
+    typedef ListIterator<T, V, Node> Iterator;
+    friend Iterator;
     
     List() {
         this->_begin = nullptr;
