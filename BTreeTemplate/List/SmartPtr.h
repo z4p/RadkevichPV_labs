@@ -26,7 +26,7 @@ public:
 	}
 
 	SmartPtr& operator=(const SmartPtr& rval) {
-		if (this == &rval) {
+		if (this != &rval) {
 			object = rval.object;
 			counter = rval.counter;
 			if (counter) (*counter)++;
