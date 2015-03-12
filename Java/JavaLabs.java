@@ -6,10 +6,11 @@ public class JavaLabs {
         System.out.println(s3);
         
         try {
-            BigInt[] dm = (new BigInt("1152")).divmod(new BigInt("62"));
-            System.out.println("1152 / 62 = " + dm[0] + " (" + dm[1] + ")");
+            BigInt[] dm;// = (new BigInt(1152)).divmod(new BigInt(62));
+            dm = (new BigInt(10)).divmod(new BigInt(10));
+            System.out.println(dm[0] + " " + dm[1]);
         } catch (Exception e) {
-            System.err.println("Ошибка при делении. Вероятно, вы делили на ноль");
+            System.err.println("Ошибка при делении. Вероятно, вы разделили на ноль. Так нельзя");
         }
     }
     

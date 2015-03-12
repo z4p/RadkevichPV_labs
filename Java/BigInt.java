@@ -161,8 +161,8 @@ class BigInt implements Cloneable {
                 }
                 i--;
             } while (BigInt.cmpAbs(a, d) == -1 && i > -1);
-            if (i == -1) {
-                //break;
+            if (i == -1 && BigInt.cmpAbs(a, d) == -1) {
+                break;
             }
             for(int j = 2; j <= 9; j++) {
                 if (BigInt.cmpAbs(a, d.mul(new BigInt(j))) == -1) {
