@@ -1,5 +1,7 @@
 package javalabs;
 
+import static javalabs.Rocket.delay;
+
 public class JavaLabs {
     public static void lab1() {
         String s3 = (new BigInt("3247")).add(new BigInt("-1691")).toString();    //  1556
@@ -16,13 +18,29 @@ public class JavaLabs {
     
     public static void lab2() {
         Rocket r1 = new Rocket();
+        /*
+        ракета:
+            масса: 3 кг + 2 кг топлива,
+            ЖРД: 1 кг топлива / сек, 20 м/с2*кг
+        
+            2 сек: разгон до 8 м/с
+            2,8 сек: макс высота
+        */
         r1.addPart(new ScienceModule(1));
-        r1.addPart(new FuelTank(2, 1.5));
-        r1.addPart(new LiquidEngine(0.1, 1, 0.5));
+        r1.addPart(new FuelTank(1, 2));
+        r1.addPart(new LiquidEngine(1, 10, 1));
+        r1.addPart(new Separator(0.1));
+        r1.addPart(new SolidEngine(2, 20, 4, 5));
+        
+        for(int countdown = 5; countdown > 0; countdown--) {
+            System.out.println(countdown);
+            delay(1000);
+        }
+        r1.start();
     }
     
     public static void main(String[] args) {
-        lab1();
+        //lab1();
         lab2();
     }
 }
