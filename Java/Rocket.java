@@ -1,7 +1,6 @@
 package javalabs;
 
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 /*
     Симуляция полёта ракеты
@@ -209,7 +208,7 @@ public class Rocket {
     
     public static void delay(long ms) {
         long t = System.currentTimeMillis() + ms;
-        //while (System.currentTimeMillis() < t) {}
+        while (System.currentTimeMillis() < t) {}
     }
     
     public void start() {
