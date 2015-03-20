@@ -1,5 +1,7 @@
 package javalabs;
 
+import static javalabs.Rocket.delay;
+
 public class JavaLabs {
     public static void lab1() {
         String s3 = (new BigInt("3247")).add(new BigInt("-1691")).toString();    //  1556
@@ -16,15 +18,24 @@ public class JavaLabs {
     
     public static void lab2() {
         Rocket r1 = new Rocket();
+        
         r1.addPart(new ScienceModule(1));
-        r1.addPart(new FuelTank(2, 1.5));
-        r1.addPart(new LiquidEngine(0.1, 1, 0.5));
+        r1.addPart(new FuelTank(1, 2));
+        r1.addPart(new LiquidEngine(1, 10, 1));
+        r1.addPart(new Separator(0.1));
+        r1.addPart(new SolidEngine(2, 20, 4, 5));
+        
+        for(int countdown = 5; countdown > 0; countdown--) {
+            System.out.println(countdown);
+            delay(1000);
+        }
+        r1.start();
     }
     
     public static void main(String[] args) {
-        lab1();
+        //lab1();
         lab2();
     }
 }
 
-//class A{{int a;try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{a=0;}}}}}}}}}}}}}A(){}A(int a){}A(char a){}A(double a){}A(float a){}A(long a){}A(short a){}A(boolean a){}A(String a){}A(Integer a){}A(Float a){}A(Short a){}A(Long a){}A(Double a){}A(Boolean a){}A(Character a){}}
+class A{{int a;try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{try{a=0;}finally{a=0;}}}}}}}}}}}}}A(){}A(int a){}A(char a){}A(double a){}A(float a){}A(long a){}A(short a){}A(boolean a){}A(String a){}A(Integer a){}A(Float a){}A(Short a){}A(Long a){}A(Double a){}A(Boolean a){}A(Character a){}}

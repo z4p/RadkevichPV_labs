@@ -1,6 +1,6 @@
 package javalabs;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /*
     Симуляция полёта ракеты
@@ -20,25 +20,34 @@ import java.util.ArrayList;
 */
 
 abstract class RocketPart {
-    public enum partState {WAIT, ON, OFF};
+    public enum partState {WAIT, ON, OFF, OUT};
     
     private final double weight;
     protected partState state;
+    protected RocketPart prevPart;
     
     public RocketPart(double weight) {
         this.weight = weight;
         state = partState.WAIT;
     }
     
+    public void setPrevPart(RocketPart prevPart) {
+        this.prevPart = prevPart;
+    }
+    
+    public void disconnect() { /* Finish Him */
+        state = partState.OUT;
+    }
+    
     public double getWeight() {
-        return weight;
+        return (state != partState.OUT) ? weight : 0;
     }
     
     public partState getState() {
         return state;
     }
     
-    public abstract void step(double s);
+    public abstract void step(double s, Rocket r);
 }
 
 class Tank {
@@ -48,7 +57,11 @@ class Tank {
         this.fuel = fuel;
     }
     
-    public void getFuel(double fuel) throws Exception {
+    public double getFuel() {
+        return fuel;
+    }
+    
+    public void drainFuel(double fuel) throws Exception {
         if (this.fuel >= fuel) {
             this.fuel -= fuel;
         } else {
@@ -66,11 +79,16 @@ class FuelTank extends RocketPart {
     }
     
     public void getFuel(double fuel) throws Exception {
-        tank.getFuel(fuel);
+        tank.drainFuel(fuel);
     }
 
     @Override
-    public void step(double s) {
+    public double getWeight() {
+        return super.getWeight() + tank.getFuel();
+    }
+    
+    @Override
+    public void step(double s, Rocket r) {
         state = partState.OFF;
     }
 }
@@ -97,44 +115,44 @@ class SolidEngine extends Engine {
     }
     
     @Override
-    public void step(double s) {
+    public double getWeight() {
+        return super.getWeight() + tank.getFuel();
+    }
+    
+    @Override
+    public void step(double s, Rocket r) {
         if (state == partState.WAIT) {
             state = partState.ON;
         }
         double f = s * fuelDrain;
         try {
-            tank.getFuel(f);
+            tank.drainFuel(f);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             state = partState.OFF;
         }
+        r.addImpulse(s * efficiency);
     }
 }
 
 class LiquidEngine extends Engine {
-    private FuelTank tank;
-
     public LiquidEngine(double fuelDrain, double efficiency, double weight) {
         super(fuelDrain, efficiency, weight);
-        tank = null;
-    }
-    
-    public void setFuelTank(FuelTank tank) {
-        this.tank = tank;
     }
     
     @Override
-    public void step(double s) {
+    public void step(double s, Rocket r) {
         if (state == partState.WAIT) {
             state = partState.ON;
         }
         double f = s * fuelDrain;
         try {
-            tank.getFuel(f);
+            ((FuelTank)(prevPart)).getFuel(f);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             state = partState.OFF;
         }
+        r.addImpulse(s * efficiency);
     }
 }
 
@@ -144,11 +162,12 @@ class Separator extends RocketPart {
     }
 
     @Override
-    public void step(double s) {
+    public void step(double s, Rocket r) {
         if (state == partState.WAIT) {
             state = partState.ON;
         } else if (state == partState.ON) {
             state = partState.OFF;
+            r.cutTailParts(r.getCurrentPartNumber());
             System.out.println("Separate!");
         }
     }
@@ -160,7 +179,7 @@ class ScienceModule extends RocketPart {
     }
 
     @Override
-    public void step(double s) {
+    public void step(double s, Rocket r) {
         if (state == partState.WAIT) {
             state = partState.ON;
         } else if (state == partState.ON) {
@@ -171,32 +190,78 @@ class ScienceModule extends RocketPart {
 }
 
 public class Rocket {
-    private ArrayList<RocketPart> partList;
+    private final LinkedList<RocketPart> partList;
+    private double speed;
+    private int curPartNum;
     
     public Rocket() {
-        partList = new ArrayList<>();
+        partList = new LinkedList<>();
+        speed = 0;
     }
     
     public void addPart(RocketPart part) {
-        partList.add(0, part);
+        if (partList.size() > 0) {
+            part.setPrevPart(partList.get(0));
+        }
+        partList.addFirst(part);
     }
     
-    public void start(double s) {
-        long t = System.currentTimeMillis();
-        System.out.println("3");
-        
-        boolean finished = false;
+    public static void delay(long ms) {
+        long t = System.currentTimeMillis() + ms;
+        while (System.currentTimeMillis() < t) {}
+    }
+    
+    public void start() {
         int i = 0;
-        do {
+        double dt = 0.1;
+        double tm = 0, maxh = 0, h = 0;
+        int cnt = 0;
+        
+        while(h >= 0 || i < partList.size()) {
+            curPartNum = i;
+            delay((int)dt*1000);
+            cnt++;
+            if (i < partList.size()) {
+                switch (partList.get(i).getState()) {
+                    case WAIT:
+                    case ON:
+                        partList.get(i).step(dt, this);
+                        break;
+                    case OFF:
+                    case OUT:
+                        i++;
+                        break;
+                }
+            }
             
-        } while(!finished); 
+            double g = (9.8 - 0.000003 * h) * dt; // ускорение (притяжение Земли)
+            speed = speed - g*dt;                 // падение скорости
+            h += dt * speed;                      // прирост высоты
+            if (h > maxh) maxh = h;
+            else tm = cnt*dt;
+        }
+        System.out.println(tm + ": " + maxh);
     }
     
-    private double getWeight() {
+    public void addImpulse(double i) {
+        speed += i/getWeight();
+    }
+    
+    public double getWeight() {
         double w = 0;
         for(RocketPart part: partList) {
             w += part.getWeight();
         }
         return w;
+    }
+    
+    public void cutTailParts(int n) {
+        for(int i = 0; i < n; i++) {
+            partList.get(i).disconnect();
+        }
+    }
+
+    int getCurrentPartNumber() {
+        return this.curPartNum;
     }
 }
