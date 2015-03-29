@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class RegExp {
     public static void main(String[] args) {
-        String text = "...It is as so a thousand mouth cry out in pain! WRA!!!!! D'you hear these voices too?..";
+        String text = "...It is as so a thousand mouth cry out in pain!\n"
+                + "WRA!!!!! D'you hear these voices too?..";
         String maxLine = "";
         
         Pattern p = Pattern.compile("[^a-zA-Z]+", Pattern.MULTILINE);
