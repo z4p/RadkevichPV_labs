@@ -7,14 +7,13 @@ import java.util.ArrayList;
  * @author z4p
  * @version 0.1
  */
-class BigInt {
+public class BigInt {
     private ArrayList<Integer> nums;  // 123 = [3,2,1]
     private int sign;                 // {-1 | 1}
   
     /**
      * Returns BigInt, that is equal to given integer
      * @param d given integer
-     * @return BigInt
      */
     public BigInt(int d) {
         nums = new ArrayList<>();
@@ -34,16 +33,19 @@ class BigInt {
     }
     
     /**
-     * <p>Returns BigInt, that is equal to given integer, written in string in decimal form.</p>
-     * <p>If there are some no-decimal symbols present, they are passed.<p>
-     * <p>If there are no decimal symbols, it throws NumberFormatException.<p>
-     * <p></p>
-     * <p>For example "31459" => 31459, "2 718 281 828 459 0" => 27182818284590, "-42A" => -42,
-     * but "AFh" => NumberFormatException
-     * </p>
+     * <p>Returns BigInt, that is equal to given integer, written in string in 
+     * decimal form.</p>
+     * <p>If there are some no-decimal symbols present, they are passed.
+     * If there are no decimal symbols, it throws <i>NumberFormatException</i>.<p>
+     *
+     * <p>For example:</p>
+     * <p>"31459" => 31459;</p>
+     * <p>"2 718 281 828 459 0" => 27182818284590;</p>
+     * <p>"-42A" => -42;</p>
+     * <p>but "AFh" => NumberFormatException.</p>
+     * 
      * 
      * @param d string with an integer
-     * @return BigInt
      * @throws NumberFormatException
      */
     public BigInt(String d) throws NumberFormatException {
@@ -114,6 +116,8 @@ class BigInt {
         this.normalize();
         d.normalize();
         
+        assert res.nums.size > 0;
+        
         return res;
     }
     
@@ -155,11 +159,14 @@ class BigInt {
         }
         
         res.sign = this.sign * d.sign;
+        
+        assert res.nums.size > 0;
+        
         return res;        
     }
     
     /**
-     * Divide this digit by d and returns the result
+     * Divides this digit by d and returns the result
      * @param d divisor
      * @throws DivisionByZeroException
      * @return BigInt, as the quotient
@@ -170,18 +177,18 @@ class BigInt {
     }
     
     /**
-     * Divide this digit by d and returns the result
+     * Divides this digit by d and returns the result
      * @param d divisor
      * @throws DivisionByZeroException
      * @return BigInt, as a remainder
      */
     public BigInt mod(BigInt d) throws DivisionByZeroException {
         BigInt res[] = divmod(d);
-        return res[1];        
+        return res[1];
     }
     
     /**
-     * Divide this digit by d and returns the result
+     * Divides this digit by d and returns the result
      * @param d divisor
      * @throws DivisionByZeroException
      * @return BigInt[2], where [0] is the quotient and [1] is a remainder of division
@@ -228,6 +235,10 @@ class BigInt {
         res[0].normalize();
         res[0].sign = this.sign * d.sign;
         res[1].sign = this.sign;
+        
+        assert res[0].nums.size > 0;
+        assert res[1].nums.size > 0;
+        
         return res;
     }
     
@@ -253,11 +264,9 @@ class BigInt {
      * Compares two digits (sign-insensitive)
      * @param a first digit
      * @param b second digit
-     * @return<ul>
-     * <li>  1, if a > b
-     * <li> -1, if a < b
-     * <li>  0, if a == b
-     * </ul>
+     * @return  <p>1, if a > b;</p>
+     * <p>-1, if a < b;</p>
+     * <p>0, if a == b</p>
     */
     public static int cmpAbs(BigInt a, BigInt b) {
         a.normalize();
@@ -293,15 +302,15 @@ class BigInt {
         }
     }
      
+    private void normalize() {
+        normalize(0);
+    }
+         
     /**
      * BigInt constructor without parameters. For technical purposes only.
      */
     private BigInt() {
         nums = new ArrayList<>();
         sign = 1;
-    }
-     
-    private void normalize() {
-        normalize(0);
     }
 }
