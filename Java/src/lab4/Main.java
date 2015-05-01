@@ -1,5 +1,6 @@
 package lab4;
 
+import java.io.IOException;
 import java.util.logging.*;
 
 /**
@@ -8,17 +9,20 @@ import java.util.logging.*;
  */
 public class Main {
     
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
-    
     public static void main(String args[]) {
-        String s3 = (new BigInt("3247")).add(new BigInt("-1691")).toString();    //  1556
-        System.out.println(s3);
+//        try {
+//            LogManager.getLogManager().readConfiguration(
+//                    Main.class.getResourceAsStream("logging.properies"));
+//        } catch (IOException | SecurityException ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
         try {
-            BigInt[] dm;// = (new BigInt(1152)).divmod(new BigInt(62));
-            dm = (new BigInt(12)).divmod(new BigInt(10));
+            BigInt[] dm = (new BigInt(12)).divmod(new BigInt("-0"));
             System.out.println(dm[0] + " " + dm[1]);
         } catch (DivisionByZeroException e) {
+            Logger.getLogger(Main.class.getName()).log(Level.WARNING, 
+                    "User has divided something by zero", e);
             System.err.println("Ошибка при делении. Вероятно, вы разделили на ноль. Так нельзя");
         }
     }

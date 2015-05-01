@@ -8,6 +8,7 @@ package lab4;
  * @version 0.1
  */
 public class DivisionByZeroException extends Exception {
+    private static final long serialVersionUID = 1L;
     public DivisionByZeroException() {
         super("Division by zero is disabled in this version");
     }

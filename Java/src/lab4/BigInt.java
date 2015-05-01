@@ -1,6 +1,8 @@
 package lab4;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implements long arithmetic for integers
@@ -25,11 +27,15 @@ public class BigInt {
         }
         d = Math.abs(d);
         
+        if (d == 0) nums.add(0);
+        
         while (d > 0) {
             int a = d % 10;
             d /= 10;
-            nums.add(new Integer(a));
+            nums.add(a);
         }
+        
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, "BigInt created: "+d);
     }
     
     /**
@@ -64,8 +70,12 @@ public class BigInt {
         }
         
         if (nums.isEmpty()) {
+            Logger.getLogger(BigInt.class.getName()).log(
+                    Level.WARNING, "Trying to create BigInt from String without numbers");
             throw new NumberFormatException();
         }
+        
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, "BigInt created: "+d);
     }
 
     /**
@@ -116,7 +126,9 @@ public class BigInt {
         this.normalize();
         d.normalize();
         
-        assert res.nums.size > 0;
+        assert res.nums.size() > 0;
+        
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, d+" added to "+this);
         
         return res;
     }
@@ -129,6 +141,7 @@ public class BigInt {
     public BigInt sub(BigInt d) {
         BigInt b = new BigInt(d.toString());
         b.sign = d.sign * -1;
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, d+" subtracted from "+this);
         return this.add(b);
     }
     
@@ -147,8 +160,8 @@ public class BigInt {
             for(int j = 0; j < i; j++) {
                 a.nums.add(0);
             }
-            for(int j = 0; j < this.nums.size(); j++) {
-                int p = this.nums.get(j) * d.nums.get(i) + carry;
+            for (Integer num : this.nums) {
+                int p = num * d.nums.get(i) + carry;
                 carry = p / 10;
                 p = p % 10;
                 a.nums.add(p);
@@ -160,7 +173,9 @@ public class BigInt {
         
         res.sign = this.sign * d.sign;
         
-        assert res.nums.size > 0;
+        assert res.nums.size() > 0;
+        
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, this+" multiplied by "+d);
         
         return res;        
     }
@@ -197,7 +212,7 @@ public class BigInt {
         BigInt res[] = new BigInt[2];
         res[0] = new BigInt();
         res[1] = new BigInt();
-        if (d.toString().equals("0")) {
+        if (cmpAbs(d, new BigInt(0)) == 0) {
             throw new DivisionByZeroException();
         }
 
@@ -208,7 +223,7 @@ public class BigInt {
         int i = this.nums.size()-1;
         do {
             do {
-                a.nums.add(0, new Integer(this.nums.get(i)));
+                a.nums.add(0, this.nums.get(i));
                 if (BigInt.cmpAbs(a, d) == -1) {
                     r.nums.add(0);
                 }
@@ -236,8 +251,10 @@ public class BigInt {
         res[0].sign = this.sign * d.sign;
         res[1].sign = this.sign;
         
-        assert res[0].nums.size > 0;
-        assert res[1].nums.size > 0;
+        assert res[0].nums.size() > 0;
+        assert res[1].nums.size() > 0;
+        
+        Logger.getLogger(BigInt.class.getName()).log(Level.FINE, this+" divided by "+d);
         
         return res;
     }
@@ -292,7 +309,7 @@ public class BigInt {
     // доведение числа разрядов до n. При n=0 - удаление всех нулей в старших разрядах
     private void normalize(int n) {
         if (n == 0) {
-            while (nums.get(nums.size()-1) == 0 && nums.size() > 1) {
+            while (nums.size() > 1 && nums.get(nums.size()-1) == 0) {
                 nums.remove(nums.size()-1);
             }
         } else {
